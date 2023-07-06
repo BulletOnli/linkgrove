@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const multer = require("multer");
-const { createLink, deleteLink, updateLink } = require("../controllers/upload");
+const { createLink, deleteLink, updateLink } = require("../controllers/link");
 const protect = require("../middleware/authMiddleware");
 
 const storage = multer.diskStorage({
