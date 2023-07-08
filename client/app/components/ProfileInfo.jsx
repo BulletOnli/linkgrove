@@ -7,18 +7,16 @@ import {
     FaDiscord,
 } from "react-icons/fa";
 
-const Profile = () => {
+const ProfileInfo = ({ params }) => {
     return (
-        <div className="w-[40rem] h-full flex flex-col items-center">
-            <Image
-                src="/tzuyu.jpg"
-                fallbackSrc="https://via.placeholder.com/180"
-                borderRadius={"full"}
-                boxSize="180px"
-                mt={-20}
-                border="2px"
+        <div className="sticky top-[10rem] w-[40rem] h-max flex flex-col items-center">
+            <Avatar
+                name={params.username}
+                src="/cj.jpg"
+                size="2xl"
+                mt="-4rem"
             />
-            <h1 className="mt-5 text-2xl font-bold">Gemmuel Dela Pena</h1>
+            <h1 className="mt-5 text-2xl font-bold">{params.username}</h1>
             <p className="text-sm mt-2 text-gray-300">
                 Time is gold while watching bold
             </p>
@@ -33,4 +31,4 @@ const Profile = () => {
     );
 };
 
-export default Profile;
+export default ProfileInfo;

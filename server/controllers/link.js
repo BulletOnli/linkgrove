@@ -4,7 +4,7 @@ const { uploadImg, getImg, deleteImg } = require("./cloudinary");
 
 const createLink = asyncHandler(async (req, res) => {
     if (!req.user) throw new Error("User not Found");
-    const { title, url } = req.body;
+    const { title, url, github } = req.body;
     const img = await uploadImg(req.file);
 
     const thumbnail = {
@@ -16,6 +16,7 @@ const createLink = asyncHandler(async (req, res) => {
         title,
         url,
         thumbnail,
+        github,
         creator: req.user._id,
     });
 
@@ -40,7 +41,7 @@ const deleteLink = asyncHandler(async (req, res) => {
 });
 
 const updateLink = asyncHandler(async (req, res) => {
-    const { title, url } = req.body;
+    const { title, url, github } = req.body;
     const { id } = req.params;
 
     try {
@@ -50,8 +51,9 @@ const updateLink = asyncHandler(async (req, res) => {
         await deleteImg(id);
         // update the link
         await Link.findByIdAndUpdate(id, {
-            title: title,
-            url: url,
+            title,
+            url,
+            github,
             thumbnailId: img.asset_id,
             thumbnailUrl: img.url,
         });

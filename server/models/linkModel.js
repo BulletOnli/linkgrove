@@ -21,6 +21,9 @@ const linkSchema = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    github: {
+        type: String,
+    },
     creator: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",

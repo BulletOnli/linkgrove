@@ -10,7 +10,7 @@ module.exports = {
             boxShadow: {
                 custom: "4px 4px 12px rgb(0, 0, 0, .3);",
                 custom2: "3px 3px 6px rgb(0, 0, 0, .3);",
-                custom3: "0 2px 6px rgb(0, 0, 0, .3);",
+                custom3: "0 2px 4px rgb(0, 0, 0, .2);",
             },
             backgroundColor: {
                 custom: "linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5))",

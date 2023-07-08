@@ -1,17 +1,17 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { ChakraProvider } from "@chakra-ui/react";
-import Header from "./components/Header";
-import Profile from "./components/Profile";
+import Navbar from "./components/Navbar";
 
 const App = ({ children }) => {
+    const pathname = usePathname();
+    const hideNav = pathname === "/login" || pathname === "/register";
+
     return (
         <ChakraProvider>
-            <div className="w-full h-[100rem] text-white flex flex-col bg-[#000000]">
-                <Header />
-                <div className="w-full h-full flex">
-                    <Profile />
-                    <div className="w-full p-4">{children}</div>
-                </div>
+            <div className="relative w-full min-h-screen text-[#F5F5F5] flex flex-col bg-[#0D1117] font-custom">
+                {!hideNav && <Navbar />}
+                {children}
             </div>
         </ChakraProvider>
     );
