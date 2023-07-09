@@ -51,29 +51,46 @@ const deleteLink = asyncHandler(async (req, res) => {
 });
 
 const updateLink = asyncHandler(async (req, res) => {
-    const { title, url, github } = req.body;
     const { id } = req.params;
 
     try {
-        // upload new Img
-        const img = await uploadImg(req.file);
-        // delete old img in both cloudinary and local
-        await deleteImg(id);
-        // update the link
-        await Link.findByIdAndUpdate(id, {
-            title,
-            url,
-            github,
-            thumbnailId: img.asset_id,
-            thumbnailUrl: img.url,
-        });
+        const link = await Link.findById(id);
+        if (!link) {
+            res.status(404);
+            throw new Error("Link not found!");
+        }
+
+        if (req.body.title) {
+            link.title = req.body.title;
+        }
+        if (req.body.url) {
+            link.url = req.body.url;
+        }
+        if (req.body.github) {
+            link.github = req.body.github;
+        }
+
+        if (req.file) {
+            // upload new img
+            const img = await uploadImg(req.file);
+            // Delete old image in both cloudinary and local
+            await deleteImg(id);
+
+            const thumbnail = {
+                url: img.url,
+                id: img.asset_id,
+            };
+            link.thumbnail = thumbnail;
+        }
+
+        await link.save();
 
         res.status(200).json({
             message: "Link updated successfully!",
         });
     } catch (error) {
         res.status(404);
-        throw new Error("Link not found!");
+        throw new Error("Link updating failed!");
     }
 });
 

@@ -8,10 +8,14 @@ import {
 } from "react-icons/fa";
 import { useUserStore } from "../store/userStore";
 import { useEffect } from "react";
-import { getUserAccount } from "../api/userApi";
 
 const ProfileInfo = ({ params }) => {
     const { accountUser, getAccountUser } = useUserStore();
+
+    let username = params.username;
+    if (username.includes("%20")) {
+        username = params.username.replace(/%20/g, " ");
+    }
 
     useEffect(() => {
         getAccountUser();
@@ -25,7 +29,7 @@ const ProfileInfo = ({ params }) => {
                 size="2xl"
                 mt="-4rem"
             />
-            <h1 className="mt-5 text-2xl font-bold">{params.username}</h1>
+            <h1 className="mt-5 text-2xl font-bold">{username}</h1>
             <p className="text-sm mt-2 text-gray-300">
                 Time is gold while watching bold
             </p>

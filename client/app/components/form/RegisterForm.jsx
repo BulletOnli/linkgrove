@@ -6,8 +6,6 @@ import {
     InputLeftElement,
     Button,
     useToast,
-    FormHelperText,
-    FormErrorMessage,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
@@ -39,7 +37,6 @@ const RegisterForm = () => {
                 registerDetails
             );
             localStorage.setItem("weblinksToken", response.data.token);
-
             setIsLoading(false);
             toast({
                 title: "Account Created!",

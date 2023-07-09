@@ -21,7 +21,7 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            await deleteLink("/links", id);
+            await deleteLink(`/links/${id}`);
             mutate();
             setIsLoading(false);
             toast({
@@ -33,6 +33,7 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
             });
             onClose();
         } catch (error) {
+            setIsLoading(false);
             console.log(error);
             toast({
                 title: "Oops! Something went wrong.",

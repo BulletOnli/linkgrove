@@ -5,6 +5,9 @@ const userStore = (set, get) => ({
     accountUser: [],
     getAccountUser: async () => {
         const accountUser = await getUserAccount("/users");
+        if (Object.values(accountUser).length === 0) {
+            localStorage.removeItem("weblinksToken");
+        }
         set({ accountUser: accountUser });
     },
     logoutUser: () => {

@@ -4,12 +4,6 @@ const Link = require("../models/linkModel");
 
 const getAccountUser = asyncHandler(async (req, res) => {
     const user = req.user;
-
-    if (!user) {
-        res.status(404);
-        throw new Error("Please Log in");
-    }
-
     res.status(200).json(user);
 });
 

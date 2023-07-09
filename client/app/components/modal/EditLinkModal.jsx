@@ -1,6 +1,5 @@
 "use client";
 import {
-    Avatar,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -9,10 +8,8 @@ import {
     ModalBody,
     ModalCloseButton,
     useToast,
-    Flex,
     FormControl,
     Image,
-    HStack,
     VStack,
     Button,
     Input,
@@ -20,13 +17,19 @@ import {
     InputLeftElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import axios from "axios";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
+import { updateLink } from "@/app/api/linkApi";
 
-const EditLinkModal = ({ isOpen, onClose }) => {
-    const [previewImage, setPreviewImage] = useState("");
+const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
     const toast = useToast();
+    const [previewImage, setPreviewImage] = useState("");
+    const [isLoadingChanges, setIsLoadingChanges] = useState(false);
+
+    // Set default value of inputs
+    const [title, setTitle] = useState(link?.title);
+    const [url, setUrl] = useState(link?.url);
+    const [github, setGithub] = useState(link?.github);
 
     const handleImgUpload = (e) => {
         const file = e.target.files[0];
@@ -42,20 +45,12 @@ const EditLinkModal = ({ isOpen, onClose }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = new FormData(e.target);
-
+        const formData = new FormData(e.target);
         try {
-            // const response = await axios.post(
-            //     "http://localhost:8080/user/profile/upload",
-            //     data,
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${localStorage.getItem(
-            //                 "vibelyToken"
-            //             )}`,
-            //         },
-            //     }
-            // );
+            setIsLoadingChanges(true);
+            await updateLink(`/links/${link?._id}`, formData);
+            mutate();
+            setIsLoadingChanges(false);
             toast({
                 title: "Link Updated",
                 status: "success",
@@ -66,6 +61,7 @@ const EditLinkModal = ({ isOpen, onClose }) => {
             onClose();
             setPreviewImage("");
         } catch (error) {
+            setIsLoadingChanges(false);
             console.log(error);
             toast({
                 title: "Oops! Something went wrong.",
@@ -91,7 +87,7 @@ const EditLinkModal = ({ isOpen, onClose }) => {
                                 h="12rem"
                                 objectFit="cover"
                                 rounded="lg"
-                                src={previewImage}
+                                src={previewImage || link?.thumbnail.url}
                                 fallbackSrc="https://via.placeholder.com/400"
                             />
                             <Button size="sm" w="full" colorScheme="teal">
@@ -126,6 +122,8 @@ const EditLinkModal = ({ isOpen, onClose }) => {
                                     border="none"
                                     _hover={false}
                                     autoComplete="off"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -142,6 +140,8 @@ const EditLinkModal = ({ isOpen, onClose }) => {
                                     border="none"
                                     _hover={false}
                                     autoComplete="off"
+                                    value={url}
+                                    onChange={(e) => setUrl(e.target.value)}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -158,6 +158,8 @@ const EditLinkModal = ({ isOpen, onClose }) => {
                                     border="none"
                                     _hover={false}
                                     autoComplete="off"
+                                    value={github}
+                                    onChange={(e) => setGithub(e.target.value)}
                                 />
                             </InputGroup>
                         </VStack>
@@ -167,7 +169,12 @@ const EditLinkModal = ({ isOpen, onClose }) => {
                         <Button mr={2} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button type="submit" colorScheme="teal">
+                        <Button
+                            type="submit"
+                            colorScheme="teal"
+                            isLoading={isLoadingChanges}
+                            spinnerPlacement="start"
+                        >
                             Save Changes
                         </Button>
                     </ModalFooter>

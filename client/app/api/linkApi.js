@@ -3,8 +3,8 @@ const apiBaseUrl = axios.create({
     baseURL: "http://localhost:8080",
 });
 
-export const getLink = async (url, id) => {
-    const response = await apiBaseUrl.get(`${url}/${id}`);
+export const getLink = async (url) => {
+    const response = await apiBaseUrl.get(url);
     return response.data;
 };
 
@@ -16,6 +16,10 @@ export const createLink = async (url, data) => {
     });
 };
 
-export const deleteLink = async (url, id) => {
-    await apiBaseUrl.delete(`${url}/${id}`);
+export const updateLink = async (url, data) => {
+    await apiBaseUrl.put(url, data);
+};
+
+export const deleteLink = async (url) => {
+    await apiBaseUrl.delete(url);
 };

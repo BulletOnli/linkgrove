@@ -20,7 +20,6 @@ const LinkCard = (props) => {
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
     const { title, url, thumbnail, likes, github, _id } = props.link;
-
     const isOtherProfile = props.isOtherProfile;
 
     return (
@@ -91,9 +90,10 @@ const LinkCard = (props) => {
                 mutate={props.mutate}
             />
             <EditLinkModal
+                link={props.link}
                 isOpen={editModal.isOpen}
                 onClose={editModal.onClose}
-                id={_id}
+                mutate={props.mutate}
             />
         </>
     );

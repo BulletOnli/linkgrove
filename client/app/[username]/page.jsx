@@ -9,14 +9,13 @@ import {
     Spacer,
     useDisclosure,
 } from "@chakra-ui/react";
+import useSWR from "swr";
 import { BsSearch } from "react-icons/bs";
 import ProfileInfo from "../components/ProfileInfo";
 import Header from "../components/Header";
 import NewLinkModal from "../components/modal/NewLinkModal";
-import useSWR from "swr";
-import { getUserAccount, getUserProfile } from "../api/userApi";
+import { getUserProfile } from "../api/userApi";
 import ErrorPage from "../components/ErrorPage";
-import { useEffect, useState } from "react";
 import LinkCard from "../components/LinkCard";
 import { useUserStore } from "../store/userStore";
 
@@ -30,7 +29,6 @@ const ProfilePage = ({ params }) => {
     );
 
     const isOtherProfile = accountUser?.username !== data?.user?.username;
-
     if (error) return <ErrorPage />;
 
     return (

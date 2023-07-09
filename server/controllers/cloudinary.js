@@ -7,6 +7,7 @@ const path = require("path");
 const getImg = asyncHandler(async (id) => {
     try {
         const link = await Link.findById(id);
+
         return await cloudinary.v2.api.resource_by_asset_id([
             link.thumbnail.id,
         ]);
@@ -28,7 +29,6 @@ const uploadImg = asyncHandler(async ({ path, originalname }) => {
 
 const deleteImg = asyncHandler(async (id) => {
     const img = await getImg(id);
-
     try {
         // delete img in local
         const filePath = path.join(__dirname, `../uploads/${img.public_id}`);
