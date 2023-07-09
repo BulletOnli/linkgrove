@@ -2,10 +2,21 @@
 import LoginForm from "../components/form/LoginForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
 
 const LoginPage = () => {
+    const router = useRouter();
+
+    useEffect(() => {
+        const token = localStorage.getItem("weblinksToken");
+        if (token) {
+            router.push("/");
+        }
+    }, []);
+
     return (
         <div className="relative w-full flex flex-col justify-center items-center">
             <div className="absolute top-0 w-[70vw] flex items-center justify-between p-6">

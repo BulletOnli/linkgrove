@@ -3,44 +3,62 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
-const generateToken = (userId) => {
-    return jwt.sign({ userId }, process.env.JWT_SECRET, {
-        expiresIn: "3d",
+const generateToken = (_id) => {
+    return jwt.sign({ _id }, process.env.JWT_SECRET, {
+        expiresIn: "3h",
     });
 };
-
 const registerUser = asyncHandler(async (req, res) => {
-    const { username, password } = req.body;
+    const { username, password, confirmPassword } = req.body;
     const user = await User.findOne({ username });
-    if (user) throw new Error("Username already exist!");
+    if (user) {
+        res.status(403);
+        throw new Error("Username already exist!");
+    }
+    if (password !== confirmPassword) {
+        res.status(403);
+        throw new Error("Password incorrect!");
+    }
 
     const hashedPassword = await bcrypt.hash(password, 12);
+
     const newUser = await User.create({
         username,
         password: hashedPassword,
     });
 
+    const userDetails = {
+        username: newUser.username,
+        _id: newUser._id,
+    };
+
     res.status(201).json({
-        message: "Registration Successful!",
-        user: newUser._id,
-        token: generateToken(),
+        user: userDetails,
+        token: generateToken(newUser._id),
     });
 });
 
 const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
-    if (!user) throw new Error("Username doesn't exist");
+    if (!user) {
+        res.status(403);
+        throw new Error("User doesn't exist");
+    }
+
+    const userDetails = {
+        username: user.username,
+        _id: user._id,
+    };
 
     if (user && (await bcrypt.compare(password, user.password))) {
         res.status(200).json({
-            message: "Login success",
-            user: user._id,
-            token: generateToken(),
+            user: userDetails,
+            token: generateToken(user._id),
         });
     } else {
-        res.status(401);
-        throw new Error("Login Failed, Not Authorized");
+        res.status(404);
+        throw new Error("Incorrect email or password");
     }
 });
 

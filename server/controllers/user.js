@@ -2,21 +2,33 @@ const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Link = require("../models/linkModel");
 
-const getUser = asyncHandler(async (req, res) => {
-    const { username } = req.params;
+const getAccountUser = asyncHandler(async (req, res) => {
+    const user = req.user;
 
-    const currentUser = await User.findOne({ username }).select("-password");
-    if (!currentUser) {
+    if (!user) {
+        res.status(404);
+        throw new Error("Please Log in");
+    }
+
+    res.status(200).json(user);
+});
+
+// Get the user profile regardless of the auth status
+// public
+const getUserProfile = asyncHandler(async (req, res) => {
+    const { username } = req.params;
+    const user = await User.findOne({ username }).select("-password");
+    if (!user) {
         res.status(404);
         throw new Error("User not Found");
     }
 
-    const links = await Link.find({ creator: currentUser._id });
+    const links = await Link.find({ creator: user._id });
 
     res.status(200).json({
-        currentUser,
+        user,
         links,
     });
 });
 
-module.exports = { getUser };
+module.exports = { getUserProfile, getAccountUser };

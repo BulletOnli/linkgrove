@@ -1,4 +1,5 @@
 "use client";
+import { deleteLink } from "@/app/api/linkApi";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -9,26 +10,20 @@ import {
     Button,
     useToast,
 } from "@chakra-ui/react";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
-const AlertDelete = ({ isOpen, onClose }) => {
+const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
     const toast = useToast();
     const cancelRef = useRef();
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const response = await axios.post(
-            //     "http://localhost:8080/user/profile/upload",
-            //     data,
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${localStorage.getItem(
-            //                 "vibelyToken"
-            //             )}`,
-            //         },
-            //     }
-            // );
+            setIsLoading(true);
+            await deleteLink("/links", id);
+            mutate();
+            setIsLoading(false);
             toast({
                 title: "Link Deleted!",
                 status: "success",
@@ -67,7 +62,13 @@ const AlertDelete = ({ isOpen, onClose }) => {
                         <Button ref={cancelRef} onClick={onClose}>
                             Cancel
                         </Button>
-                        <Button colorScheme="red" onClick={handleSubmit} ml={3}>
+                        <Button
+                            colorScheme="red"
+                            ml={3}
+                            isLoading={isLoading}
+                            spinnerPlacement="start"
+                            onClick={handleSubmit}
+                        >
                             Delete
                         </Button>
                     </AlertDialogFooter>

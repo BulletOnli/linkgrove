@@ -13,15 +13,15 @@ import { AiOutlineHeart, AiOutlineLink } from "react-icons/ai";
 import { BsGithub } from "react-icons/bs";
 import { FiExternalLink, FiEdit } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
-import { usePathname } from "next/navigation";
 import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
 
-const LinkCard = () => {
+const LinkCard = (props) => {
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
-    const pathname = usePathname();
-    const isOtherProfile = pathname !== "/gemmuel";
+    const { title, url, thumbnail, likes, github, _id } = props.link;
+
+    const isOtherProfile = props.isOtherProfile;
 
     return (
         <>
@@ -40,6 +40,7 @@ const LinkCard = () => {
                             aria-label="Edit Link"
                             icon={<FiEdit />}
                             colorScheme="blackAlpha"
+                            bg="blackAlpha.800"
                             onClick={editModal.onOpen}
                         />
                         <IconButton
@@ -48,39 +49,34 @@ const LinkCard = () => {
                             aria-label="Delete link"
                             icon={<FaTrash />}
                             colorScheme="blackAlpha"
+                            bg="blackAlpha.800"
                             onClick={deleteModal.onOpen}
                         />
                     </VStack>
                 )}
-                <Link
-                    href="/kwadernote2.png"
-                    target="_blank"
-                    className="w-full cursor-zoom-in"
-                >
+                <Link href={url} target="_blank" className="w-full ">
                     <Image
                         w="full"
                         h="120px"
                         objectFit="cover"
-                        src="/kwadernote2.png"
+                        src={thumbnail.url}
                         roundedTop="xl"
                         fallbackSrc="https://via.placeholder.com/180"
                     />
                 </Link>
                 <div className="w-full flex flex-col py-2 px-3">
-                    <h1 className="text-sm font-semibold">
-                        Student Management System
-                    </h1>
+                    <h1 className="text-sm font-semibold">{title}</h1>
                     <HStack mt={1}>
                         <Flex alignItems="center" gap={1}>
                             <AiOutlineHeart className="text-lg cursor-pointer " />
-                            <Text fontSize="sm">12</Text>
+                            <Text fontSize="sm">{likes}</Text>
                         </Flex>
                         <Spacer />
                         <HStack>
-                            <Link href="#">
+                            <Link href={github || ""} target="_blank">
                                 <BsGithub className=" cursor-pointer hover:text-blue-500" />
                             </Link>
-                            <Link href="#">
+                            <Link href={url || ""} target="_blank">
                                 <FiExternalLink className="text-lg cursor-pointer hover:text-blue-500" />
                             </Link>
                         </HStack>
@@ -91,10 +87,13 @@ const LinkCard = () => {
             <AlertDelete
                 isOpen={deleteModal.isOpen}
                 onClose={deleteModal.onClose}
+                id={_id}
+                mutate={props.mutate}
             />
             <EditLinkModal
                 isOpen={editModal.isOpen}
                 onClose={editModal.onClose}
+                id={_id}
             />
         </>
     );

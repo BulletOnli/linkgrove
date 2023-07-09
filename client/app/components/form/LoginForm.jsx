@@ -5,15 +5,58 @@ import {
     InputGroup,
     InputLeftElement,
     Button,
+    useToast,
+    FormHelperText,
+    FormErrorMessage,
 } from "@chakra-ui/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
+import axios from "axios";
 
 const LoginForm = () => {
+    const toast = useToast();
+    const router = useRouter();
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            setIsLoading(true);
+            const response = await axios.post(
+                "http://localhost:8080/users/login",
+                { username, password }
+            );
+            localStorage.setItem("weblinksToken", response.data.token);
+
+            setIsLoading(false);
+            toast({
+                title: "Login Success!",
+                status: "success",
+                isClosable: true,
+                position: "top",
+                duration: 3000,
+            });
+            router.push(`/${username}`);
+        } catch (error) {
+            setIsLoading(false);
+            toast({
+                title: `Oops! ${error.response.data.error.message}.`,
+                status: "error",
+                isClosable: true,
+                position: "top",
+                duration: 2000,
+            });
+        }
+    };
+
     return (
         <div className="w-[28rem]  bg-[#23232E] flex flex-col items-center p-8 rounded-xl">
             <h1 className="text-4xl font-bold mb-6">Login</h1>
-            <FormControl as="form">
+            <FormControl as="form" onSubmit={handleSubmit}>
                 <InputGroup mb={2}>
                     <InputLeftElement pointerEvents="none">
                         <BsFillPersonFill color="gray.300" />
@@ -21,12 +64,15 @@ const LoginForm = () => {
                     <Input
                         type="text"
                         placeholder="Username"
+                        name="username"
                         variant="filled"
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
                         _hover={false}
                         autoComplete="off"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
                     />
                 </InputGroup>
                 <InputGroup mb={2}>
@@ -36,14 +82,25 @@ const LoginForm = () => {
                     <Input
                         type="password"
                         placeholder="Password"
+                        name="password"
                         variant="filled"
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
                         _hover={false}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
                     />
                 </InputGroup>
-                <Button w="full" colorScheme="teal" mt={3}>
+                <Button
+                    type="submit"
+                    w="full"
+                    colorScheme="teal"
+                    mt={3}
+                    isLoading={isLoading}
+                    loadingText="Logging in..."
+                    spinnerPlacement="start"
+                >
                     Login
                 </Button>
             </FormControl>

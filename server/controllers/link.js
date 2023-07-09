@@ -2,8 +2,18 @@ const asyncHandler = require("express-async-handler");
 const Link = require("../models/linkModel");
 const { uploadImg, getImg, deleteImg } = require("./cloudinary");
 
+const getLink = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const link = await Link.findById(id);
+
+    res.status(200).json(link);
+});
+
 const createLink = asyncHandler(async (req, res) => {
-    if (!req.user) throw new Error("User not Found");
+    if (!req.user) {
+        res.status(404);
+        throw new Error("Please log in");
+    }
     const { title, url, github } = req.body;
     const img = await uploadImg(req.file);
 
@@ -17,7 +27,7 @@ const createLink = asyncHandler(async (req, res) => {
         url,
         thumbnail,
         github,
-        creator: req.user._id,
+        creator: req.user.id,
     });
 
     res.status(201).json(newLink);
@@ -67,4 +77,4 @@ const updateLink = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { createLink, deleteLink, updateLink };
+module.exports = { getLink, createLink, deleteLink, updateLink };

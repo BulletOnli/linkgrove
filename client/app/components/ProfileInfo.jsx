@@ -6,12 +6,21 @@ import {
     FaFacebook,
     FaDiscord,
 } from "react-icons/fa";
+import { useUserStore } from "../store/userStore";
+import { useEffect } from "react";
+import { getUserAccount } from "../api/userApi";
 
 const ProfileInfo = ({ params }) => {
+    const { accountUser, getAccountUser } = useUserStore();
+
+    useEffect(() => {
+        getAccountUser();
+    }, []);
+
     return (
         <div className="sticky top-[10rem] w-[40rem] h-max flex flex-col items-center">
             <Avatar
-                name={params.username}
+                name={accountUser?.username}
                 src="/cj.jpg"
                 size="2xl"
                 mt="-4rem"

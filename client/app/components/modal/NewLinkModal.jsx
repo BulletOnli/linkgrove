@@ -20,13 +20,15 @@ import {
     InputLeftElement,
 } from "@chakra-ui/react";
 import { useState } from "react";
-import axios from "axios";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
 
-const NewLinkModal = ({ isOpen, onClose }) => {
-    const [previewImage, setPreviewImage] = useState("");
+import { createLink } from "@/app/api/linkApi";
+
+const NewLinkModal = ({ isOpen, onClose, mutate }) => {
     const toast = useToast();
+    const [previewImage, setPreviewImage] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleImgUpload = (e) => {
         const file = e.target.files[0];
@@ -43,19 +45,11 @@ const NewLinkModal = ({ isOpen, onClose }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const data = new FormData(e.target);
-
         try {
-            // const response = await axios.post(
-            //     "http://localhost:8080/user/profile/upload",
-            //     data,
-            //     {
-            //         headers: {
-            //             Authorization: `Bearer ${localStorage.getItem(
-            //                 "vibelyToken"
-            //             )}`,
-            //         },
-            //     }
-            // );
+            setIsLoading(true);
+            await createLink("/links", data);
+            mutate();
+            setIsLoading(false);
             toast({
                 title: "New link created!",
                 status: "success",
@@ -66,7 +60,7 @@ const NewLinkModal = ({ isOpen, onClose }) => {
             onClose();
             setPreviewImage("");
         } catch (error) {
-            console.log(error);
+            setIsLoading(false);
             toast({
                 title: "Oops! Something went wrong.",
                 status: "error",
@@ -179,6 +173,8 @@ const NewLinkModal = ({ isOpen, onClose }) => {
                             isDisabled={!previewImage}
                             type="submit"
                             colorScheme="teal"
+                            isLoading={isLoading}
+                            spinnerPlacement="start"
                         >
                             Create
                         </Button>

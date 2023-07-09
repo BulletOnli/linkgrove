@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
-const protect = asyncHandler(async (req, res, next) => {
+const checkAuth = asyncHandler(async (req, res, next) => {
     let token;
     const authHeader = req.headers["authorization"];
 
@@ -10,16 +10,16 @@ const protect = asyncHandler(async (req, res, next) => {
         try {
             token = authHeader.split(" ")[1];
             const decode = jwt.verify(token, process.env.JWT_SECRET);
-            req.user = await User.findOne(decode._id).select("-password");
-
+            req.user = await User.findById(decode._id).select("-password");
             next();
         } catch (error) {
-            throw new Error("Not Authorized, Token expired");
+            req.user = {};
+            next();
         }
     } else {
-        res.status(401);
-        throw new Error("Not Authorized");
+        req.user = {};
+        next();
     }
 });
 
-module.exports = protect;
+module.exports = checkAuth;
