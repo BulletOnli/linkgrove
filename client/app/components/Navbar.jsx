@@ -13,7 +13,7 @@ import { BsFillPersonFill, BsGear } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
-import { useUserStore } from "../store/userStore";
+import { useUserStore } from "../zustandStore/userStore";
 import { useEffect } from "react";
 
 const Navbar = () => {
@@ -47,9 +47,15 @@ const Navbar = () => {
                         as={Button}
                         colorScheme="blackAlpha"
                         rightIcon={<ChevronDownIcon />}
-                        leftIcon={<Avatar size="xs" />}
+                        leftIcon={
+                            <Avatar
+                                size="sm"
+                                name={accountUser.username}
+                                src={accountUser?.profilePic?.url}
+                            />
+                        }
                     >
-                        {accountUser.username}
+                        {accountUser?.username}
                     </MenuButton>
                     <MenuList bg="#0D1117" fontSize="sm" zIndex={40}>
                         <MenuItem
@@ -64,21 +70,13 @@ const Navbar = () => {
                         </MenuItem>
                         <MenuItem
                             as={Link}
-                            href={`/${accountUser.username}`}
+                            href={`/${accountUser?.username}`}
                             bg="#0D1117"
                             _hover={{ bg: "#343541" }}
                             icon={<BsFillPersonFill size={18} />}
                             iconSpacing={2}
                         >
                             My Account
-                        </MenuItem>
-                        <MenuItem
-                            bg="#0D1117"
-                            _hover={{ bg: "#343541" }}
-                            icon={<BsGear size={16} />}
-                            iconSpacing={2}
-                        >
-                            Settings
                         </MenuItem>
                         <MenuItem
                             as={Text}

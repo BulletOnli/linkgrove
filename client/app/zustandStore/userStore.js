@@ -1,13 +1,17 @@
 import { create } from "zustand";
-import { getUserAccount } from "../api/userApi";
+import { getUserAccountDetails } from "../api/userApi";
 
 const userStore = (set, get) => ({
     accountUser: [],
     getAccountUser: async () => {
-        const accountUser = await getUserAccount("/users");
+        // getting the account details
+        const accountUser = await getUserAccountDetails("/users/details");
+
+        // automatically remove the token when it expires
         if (Object.values(accountUser).length === 0) {
             localStorage.removeItem("weblinksToken");
         }
+
         set({ accountUser: accountUser });
     },
     logoutUser: () => {

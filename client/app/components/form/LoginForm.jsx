@@ -98,7 +98,6 @@ const LoginForm = () => {
                     colorScheme="teal"
                     mt={3}
                     isLoading={isLoading}
-                    loadingText="Logging in..."
                     spinnerPlacement="start"
                 >
                     Login

@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 
+// just returns the account details
 const checkAuth = asyncHandler(async (req, res, next) => {
     let token;
     const authHeader = req.headers["authorization"];

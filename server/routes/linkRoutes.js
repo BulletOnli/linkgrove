@@ -6,7 +6,7 @@ const {
     deleteLink,
     updateLink,
     getLink,
-} = require("../controllers/link");
+} = require("../controllers/linkController");
 const checkAuth = require("../middleware/authMiddleware");
 
 const storage = multer.diskStorage({

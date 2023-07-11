@@ -24,7 +24,7 @@ const LinkCard = (props) => {
 
     return (
         <>
-            <div className="relative w-[18rem] flex flex-col items-center bg-[#23232E] rounded-xl">
+            <div className="relative w-[18rem] flex flex-col items-center bg-[#1f2232] rounded-xl">
                 {!isOtherProfile && (
                     <VStack
                         position="absolute"
@@ -53,6 +53,7 @@ const LinkCard = (props) => {
                         />
                     </VStack>
                 )}
+
                 <Link href={url} target="_blank" className="w-full ">
                     <Image
                         w="full"
@@ -64,7 +65,9 @@ const LinkCard = (props) => {
                     />
                 </Link>
                 <div className="w-full flex flex-col py-2 px-3">
-                    <h1 className="text-sm font-semibold">{title}</h1>
+                    <h1 className=" text-center text-sm font-semibold">
+                        {title}
+                    </h1>
                     <HStack mt={1}>
                         <Flex alignItems="center" gap={1}>
                             <AiOutlineHeart className="text-lg cursor-pointer " />
@@ -72,12 +75,16 @@ const LinkCard = (props) => {
                         </Flex>
                         <Spacer />
                         <HStack>
-                            <Link href={github || ""} target="_blank">
-                                <BsGithub className=" cursor-pointer hover:text-blue-500" />
-                            </Link>
-                            <Link href={url || ""} target="_blank">
-                                <FiExternalLink className="text-lg cursor-pointer hover:text-blue-500" />
-                            </Link>
+                            {github && github.trim() !== "" && (
+                                <Link href={github}>
+                                    <BsGithub className="cursor-pointer hover:text-blue-500" />
+                                </Link>
+                            )}
+                            {url && url.trim() !== "" && (
+                                <Link href={url || ""} target="_blank">
+                                    <FiExternalLink className="text-lg cursor-pointer hover:text-blue-500" />
+                                </Link>
+                            )}
                         </HStack>
                     </HStack>
                 </div>

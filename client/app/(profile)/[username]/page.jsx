@@ -8,23 +8,23 @@ import {
     InputLeftElement,
     Spacer,
     useDisclosure,
+    Image,
 } from "@chakra-ui/react";
 import useSWR from "swr";
 import { BsSearch } from "react-icons/bs";
-import ProfileInfo from "../components/ProfileInfo";
-import Header from "../components/Header";
-import NewLinkModal from "../components/modal/NewLinkModal";
-import { getUserProfile } from "../api/userApi";
-import ErrorPage from "../components/ErrorPage";
-import LinkCard from "../components/LinkCard";
-import { useUserStore } from "../store/userStore";
+import ProfileInfo from "../../components/ProfileInfo";
+import NewLinkModal from "../../components/modal/NewLinkModal";
+import { getUserProfile } from "../../api/userApi";
+import ErrorPage from "../../components/ErrorPage";
+import LinkCard from "../../components/LinkCard";
+import { useUserStore } from "../../zustandStore/userStore";
 
 const ProfilePage = ({ params }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { accountUser, getAccountUser } = useUserStore();
 
     const { data, isLoading, error, mutate } = useSWR(
-        `/users/${params.username}`,
+        `/users/user/${params.username}`,
         getUserProfile
     );
 
@@ -32,12 +32,19 @@ const ProfilePage = ({ params }) => {
     if (error) return <ErrorPage />;
 
     return (
-        <>
-            <Header />
+        <div className="w-full min-h-screen flex flex-col items-center">
+            <Image
+                w="full"
+                src="/pc.png"
+                h="15rem"
+                objectFit="cover"
+                fallbackSrc="https://via.placeholder.com/1400"
+            />
             <div className="relative w-full h-full flex p-4">
-                <ProfileInfo params={params} />
-                <div className="w-full flex flex-col gap-8 p-2">
-                    <HStack w="full" px={6}>
+                <ProfileInfo isOtherProfile={isOtherProfile} params={params} />
+
+                <div className="flex flex-col gap-8 p-2">
+                    <HStack w="full">
                         <HStack>
                             <FormControl>
                                 <InputGroup>
@@ -62,6 +69,7 @@ const ProfilePage = ({ params }) => {
 
                     <div className="w-full grid justify-items-center grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                         {isLoading ? "Loading Links..." : ""}
+
                         {data?.links?.map((link) => (
                             <LinkCard
                                 link={link}
@@ -70,6 +78,7 @@ const ProfilePage = ({ params }) => {
                                 mutate={mutate}
                             />
                         ))}
+
                         {data?.links?.length <= 0
                             ? "User doesn't have any links yet"
                             : ""}
@@ -78,7 +87,7 @@ const ProfilePage = ({ params }) => {
             </div>
 
             <NewLinkModal isOpen={isOpen} onClose={onClose} mutate={mutate} />
-        </>
+        </div>
     );
 };
 

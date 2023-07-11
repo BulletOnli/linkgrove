@@ -11,7 +11,7 @@ const App = ({ children }) => {
 
     return (
         <ChakraProvider>
-            <div className="relative w-full min-h-screen text-[#F5F5F5] flex flex-col bg-[#0D1117] font-custom">
+            <div className="relative w-full min-h-screen text-[#F5F5F5] flex flex-col bg-[#000000] font-custom">
                 {/* <NextNProgress /> */}
                 {!hideNav && <Navbar />}
                 {children}

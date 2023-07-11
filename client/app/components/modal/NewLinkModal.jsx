@@ -18,6 +18,7 @@ import {
     Input,
     InputGroup,
     InputLeftElement,
+    Spacer,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
@@ -129,7 +130,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                     <MdLink color="gray.300" />
                                 </InputLeftElement>
                                 <Input
-                                    type="text"
+                                    type="url"
                                     placeholder="Url"
                                     name="url"
                                     variant="filled"
@@ -146,8 +147,8 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                     <FaGithub color="gray.300" />
                                 </InputLeftElement>
                                 <Input
-                                    type="text"
-                                    placeholder="Source Code"
+                                    type="url"
+                                    placeholder="Repository (Optional)"
                                     name="github"
                                     variant="filled"
                                     bg="gray.700"
@@ -160,15 +161,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                         </VStack>
                     </ModalBody>
 
-                    <ModalFooter mt={2}>
-                        <Button
-                            mr={2}
-                            onClick={onClose}
-                            variant="ghost"
-                            colorScheme="gray"
-                        >
-                            Close
-                        </Button>
+                    <ModalFooter>
                         <Button
                             isDisabled={!previewImage}
                             type="submit"

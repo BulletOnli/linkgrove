@@ -1,15 +1,11 @@
-import { Avatar, HStack, Image } from "@chakra-ui/react";
-import {
-    FaTiktok,
-    FaInstagram,
-    FaGithub,
-    FaFacebook,
-    FaDiscord,
-} from "react-icons/fa";
-import { useUserStore } from "../store/userStore";
+import { Avatar, Button, HStack, IconButton, Image } from "@chakra-ui/react";
+import { useUserStore } from "../zustandStore/userStore";
 import { useEffect } from "react";
+import SocialsGrid from "./SocialsGrid";
+import Link from "next/link";
+import { FiEdit } from "react-icons/fi";
 
-const ProfileInfo = ({ params }) => {
+const ProfileInfo = ({ params, isOtherProfile }) => {
     const { accountUser, getAccountUser } = useUserStore();
 
     let username = params.username;
@@ -22,24 +18,27 @@ const ProfileInfo = ({ params }) => {
     }, []);
 
     return (
-        <div className="sticky top-[10rem] w-[40rem] h-max flex flex-col items-center">
+        <div className="sticky top-[10rem] w-[35rem] flex flex-col items-center">
             <Avatar
                 name={accountUser?.username}
-                src="/cj.jpg"
+                src={accountUser?.profilePic?.url}
                 size="2xl"
                 mt="-4rem"
             />
-            <h1 className="mt-5 text-2xl font-bold">{username}</h1>
-            <p className="text-sm mt-2 text-gray-300">
-                Time is gold while watching bold
-            </p>
-            <HStack fontSize={22} spacing={4} mt={6}>
-                <FaTiktok className="cursor-pointer" />
-                <FaInstagram className="text-pink-300 cursor-pointer" />
-                <FaGithub className="cursor-pointer" />
-                <FaFacebook className="text-blue-400 cursor-pointer" />
-                <FaDiscord className="text-blue-500 cursor-pointer" />
-            </HStack>
+            <h1 className="relative mt-5 text-2xl font-bold">
+                {username}
+                {!isOtherProfile && (
+                    <Link
+                        href="/edit-profile"
+                        className="absolute -right-10 -top-3"
+                    >
+                        <FiEdit size={18} />
+                    </Link>
+                )}
+            </h1>
+            <p className="text-sm mt-2 text-gray-300">{accountUser?.bio}</p>
+
+            <SocialsGrid />
         </div>
     );
 };

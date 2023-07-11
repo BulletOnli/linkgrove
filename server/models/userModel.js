@@ -11,6 +11,17 @@ const userSchema = new mongoose.Schema(
             type: String,
             required: [true, "Password is required!"],
         },
+        bio: {
+            type: String,
+        },
+        profilePic: {
+            url: {
+                type: String,
+            },
+            id: {
+                type: String,
+            },
+        },
     },
     {
         timestamps: true,

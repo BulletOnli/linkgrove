@@ -17,6 +17,7 @@ app.use(cors());
 // routes
 app.use("/users", require("./routes/userRoutes"));
 app.use("/links", require("./routes/linkRoutes"));
+app.use("/socials", require("./routes/socialsRoute"));
 
 // Error handler
 app.use(errorHandler);

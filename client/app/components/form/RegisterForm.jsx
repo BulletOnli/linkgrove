@@ -120,7 +120,6 @@ const RegisterForm = () => {
                     colorScheme="teal"
                     mt={3}
                     isLoading={isLoading}
-                    loadingText="Creating account..."
                     spinnerPlacement="start"
                 >
                     Register

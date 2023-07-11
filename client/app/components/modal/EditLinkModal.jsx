@@ -25,6 +25,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState("");
     const [isLoadingChanges, setIsLoadingChanges] = useState(false);
+    const [isSomethingChanged, setIsSomethingChanged] = useState(false);
 
     // Set default value of inputs
     const [title, setTitle] = useState(link?.title);
@@ -36,6 +37,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
         const reader = new FileReader();
         reader.onload = () => {
             setPreviewImage(reader.result);
+            setIsSomethingChanged(true);
         };
 
         if (file) {
@@ -46,11 +48,18 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
+
         try {
+            for (let [key, value] of formData) {
+                if (value === "") {
+                    formData.set(key, " ");
+                }
+            }
             setIsLoadingChanges(true);
             await updateLink(`/links/${link?._id}`, formData);
             mutate();
             setIsLoadingChanges(false);
+
             toast({
                 title: "Link Updated",
                 status: "success",
@@ -60,6 +69,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
             });
             onClose();
             setPreviewImage("");
+            setIsSomethingChanged(false);
         } catch (error) {
             setIsLoadingChanges(false);
             console.log(error);
@@ -73,8 +83,17 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
         }
     };
 
+    const handleClose = () => {
+        setPreviewImage("");
+        setTitle(link?.title);
+        setUrl(link?.url);
+        setGithub(link?.github);
+        setIsSomethingChanged(false);
+        onClose();
+    };
+
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal isOpen={isOpen} onClose={handleClose}>
             <FormControl as="form" onSubmit={handleSubmit}>
                 <ModalOverlay />
                 <ModalContent color="white" bg="#23232E">
@@ -123,7 +142,10 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                     _hover={false}
                                     autoComplete="off"
                                     value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
+                                    onChange={(e) => {
+                                        setTitle(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -131,7 +153,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                     <MdLink color="gray.300" />
                                 </InputLeftElement>
                                 <Input
-                                    type="text"
+                                    type="url"
                                     placeholder="Url"
                                     name="url"
                                     variant="filled"
@@ -141,7 +163,10 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                     _hover={false}
                                     autoComplete="off"
                                     value={url}
-                                    onChange={(e) => setUrl(e.target.value)}
+                                    onChange={(e) => {
+                                        setUrl(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -149,8 +174,8 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                     <FaGithub color="gray.300" />
                                 </InputLeftElement>
                                 <Input
-                                    type="text"
-                                    placeholder="Source Code"
+                                    type="url"
+                                    placeholder="Repository"
                                     name="github"
                                     variant="filled"
                                     bg="gray.700"
@@ -159,17 +184,21 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                     _hover={false}
                                     autoComplete="off"
                                     value={github}
-                                    onChange={(e) => setGithub(e.target.value)}
+                                    onChange={(e) => {
+                                        setGithub(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                         </VStack>
                     </ModalBody>
 
-                    <ModalFooter mt={2}>
-                        <Button mr={2} onClick={onClose}>
+                    <ModalFooter>
+                        <Button mr={2} onClick={handleClose}>
                             Cancel
                         </Button>
                         <Button
+                            isDisabled={!isSomethingChanged}
                             type="submit"
                             colorScheme="teal"
                             isLoading={isLoadingChanges}

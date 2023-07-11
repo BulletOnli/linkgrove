@@ -27,6 +27,7 @@ const uploadImg = asyncHandler(async ({ path, originalname }) => {
     );
 });
 
+// only works in links, cannot be used in profile picture
 const deleteImg = asyncHandler(async (id) => {
     const img = await getImg(id);
     try {

@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
 const Link = require("../models/linkModel");
-const { uploadImg, getImg, deleteImg } = require("./cloudinary");
+const { uploadImg, getImg, deleteImg } = require("./cloudinaryController");
 
 const getLink = asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -16,6 +16,11 @@ const createLink = asyncHandler(async (req, res) => {
     }
     const { title, url, github } = req.body;
     const img = await uploadImg(req.file);
+
+    if (!img) {
+        res.status(500);
+        throw new Error("Image upload failed");
+    }
 
     const thumbnail = {
         url: img.url,

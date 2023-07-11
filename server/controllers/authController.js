@@ -5,7 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const generateToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
+        expiresIn: "3h",
     });
 };
 
@@ -26,11 +26,13 @@ const registerUser = asyncHandler(async (req, res) => {
     const newUser = await User.create({
         username,
         password: hashedPassword,
+        bio: "Bio",
     });
 
     const userDetails = {
         username: newUser.username,
         _id: newUser._id,
+        bio: newUser.bio,
     };
 
     res.status(201).json({
