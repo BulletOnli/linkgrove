@@ -1,12 +1,12 @@
 import { create } from "zustand";
-import { getUserAccountDetails } from "../api/userApi";
+import { getRequest } from "../api/fetcher";
 
+// personal details of the user only
 const userStore = (set, get) => ({
+    isLoggedIn: false,
     accountUser: [],
     getAccountUser: async () => {
-        // getting the account details
-        const accountUser = await getUserAccountDetails("/users/details");
-
+        const accountUser = await getRequest("/users/details");
         // automatically remove the token when it expires
         if (Object.values(accountUser).length === 0) {
             localStorage.removeItem("weblinksToken");

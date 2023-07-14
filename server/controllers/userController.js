@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const User = require("../models/userModel");
 const Link = require("../models/linkModel");
+const Socials = require("../models/socialsModel");
 const { uploadImg, deleteImg } = require("./cloudinaryController");
 
 // Get the user profile regardless of the auth status
@@ -8,23 +9,25 @@ const { uploadImg, deleteImg } = require("./cloudinaryController");
 const getUserProfile = asyncHandler(async (req, res) => {
     const { username } = req.params;
     const user = await User.findOne({ username }).select("-password");
+
     if (!user) {
         res.status(404);
         throw new Error("User not Found");
     }
 
     const links = await Link.find({ creator: user._id });
+    const socials = await Socials.findOne({ creator: user._id });
 
     res.status(200).json({
         user,
         links,
+        socials,
     });
 });
 
 // details of the account
 const getAccountDetails = asyncHandler(async (req, res) => {
-    const user = req.user;
-    res.status(200).json(user);
+    res.status(200).json(req.user);
 });
 
 const updateAccountDetails = asyncHandler(async (req, res) => {

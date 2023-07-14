@@ -1,5 +1,5 @@
 "use client";
-import { deleteLink } from "@/app/api/linkApi";
+import { deleteRequest } from "@/app/api/fetcher";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -21,7 +21,7 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            await deleteLink(`/links/${id}`);
+            await deleteRequest(`/links/delete?id=${id}`);
             mutate();
             setIsLoading(false);
             toast({

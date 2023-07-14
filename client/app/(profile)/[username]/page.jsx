@@ -12,23 +12,25 @@ import {
 } from "@chakra-ui/react";
 import useSWR from "swr";
 import { BsSearch } from "react-icons/bs";
-import ProfileInfo from "../../components/ProfileInfo";
+import ProfileInfo from "../../components/profile/ProfileInfo";
 import NewLinkModal from "../../components/modal/NewLinkModal";
-import { getUserProfile } from "../../api/userApi";
 import ErrorPage from "../../components/ErrorPage";
 import LinkCard from "../../components/LinkCard";
 import { useUserStore } from "../../zustandStore/userStore";
+import { getRequest } from "@/app/api/fetcher";
 
 const ProfilePage = ({ params }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { accountUser, getAccountUser } = useUserStore();
 
+    // user profile
     const { data, isLoading, error, mutate } = useSWR(
         `/users/user/${params.username}`,
-        getUserProfile
+        getRequest
     );
 
     const isOtherProfile = accountUser?.username !== data?.user?.username;
+
     if (error) return <ErrorPage />;
 
     return (
@@ -41,9 +43,14 @@ const ProfilePage = ({ params }) => {
                 fallbackSrc="https://via.placeholder.com/1400"
             />
             <div className="relative w-full h-full flex p-4">
-                <ProfileInfo isOtherProfile={isOtherProfile} params={params} />
+                <ProfileInfo
+                    userData={data?.user}
+                    isOtherProfile={isOtherProfile}
+                    params={params}
+                    socials={data?.socials}
+                />
 
-                <div className="flex flex-col gap-8 p-2">
+                <div className="w-[75%] flex flex-col gap-4 p-4">
                     <HStack w="full">
                         <HStack>
                             <FormControl>
@@ -67,7 +74,7 @@ const ProfilePage = ({ params }) => {
                         )}
                     </HStack>
 
-                    <div className="w-full grid justify-items-center grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
+                    <div className="w-full p-4 grid justify-items-center grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
                         {isLoading ? "Loading Links..." : ""}
 
                         {data?.links?.map((link) => (

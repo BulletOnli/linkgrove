@@ -1,4 +1,5 @@
-import { Avatar, Button, HStack, Image } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
+import Link from "next/link";
 import {
     FaTiktok,
     FaInstagram,
@@ -11,92 +12,118 @@ import {
     FaYoutube,
 } from "react-icons/fa";
 
-const SocialsGrid = () => {
-    const disableButton = false;
-
+const SocialsGrid = ({ socials }) => {
     return (
         <div className="grid grid-cols-3 justify-items-center gap-4 px-4 2xl:px-0 mt-10">
             <Button
+                as={socials?.facebook ? Link : ""}
+                href={`${socials?.facebook}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="facebook"
                 leftIcon={<FaFacebook />}
+                isDisabled={!socials?.facebook}
             >
                 Facebook
             </Button>
             <Button
+                as={socials?.instagram ? Link : ""}
+                href={`${socials?.instagram}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="pink"
                 leftIcon={<FaInstagram />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.instagram}
             >
                 Instagram
             </Button>
             <Button
+                as={socials?.twitter ? Link : ""}
+                href={`${socials?.twitter}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="twitter"
                 leftIcon={<FaTwitter />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.twitter}
             >
                 Twitter
             </Button>
 
             <Button
+                as={socials?.discord ? Link : ""}
+                href={`${socials?.discord}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="blue"
                 leftIcon={<FaDiscord />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.discord}
             >
                 Discord
             </Button>
             <Button
+                as={socials?.reddit ? Link : ""}
+                href={`${socials?.reddit}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="orange"
                 leftIcon={<FaReddit />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.reddit}
             >
                 Reddit
             </Button>
             <Button
+                as={socials?.telegram ? Link : ""}
+                href={`${socials?.telegram}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="telegram"
                 leftIcon={<FaTelegramPlane />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.telegram}
             >
                 Telegram
             </Button>
 
             <Button
+                as={socials?.tiktok ? Link : ""}
+                href={`${socials?.tiktok}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme=""
                 bg="gray.800"
                 leftIcon={<FaTiktok />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.tiktok}
             >
                 Tiktok
             </Button>
             <Button
+                as={socials?.youtube ? Link : ""}
+                href={`${socials?.youtube}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme="red"
                 leftIcon={<FaYoutube />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.youtube}
             >
                 Youtube
             </Button>
             <Button
+                as={socials?.github ? Link : ""}
+                href={`${socials?.github}`}
+                target="_blank"
                 w="full"
                 size="xs"
                 colorScheme=""
                 bg="#0D1117"
                 leftIcon={<FaGithub />}
-                isDisabled={disableButton}
+                isDisabled={!socials?.github}
             >
                 Github
             </Button>

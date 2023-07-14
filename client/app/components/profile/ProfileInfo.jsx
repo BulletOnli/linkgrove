@@ -1,27 +1,19 @@
-import { Avatar, Button, HStack, IconButton, Image } from "@chakra-ui/react";
-import { useUserStore } from "../zustandStore/userStore";
-import { useEffect } from "react";
+import { Avatar } from "@chakra-ui/react";
 import SocialsGrid from "./SocialsGrid";
 import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
 
-const ProfileInfo = ({ params, isOtherProfile }) => {
-    const { accountUser, getAccountUser } = useUserStore();
-
+const ProfileInfo = ({ userData, params, isOtherProfile, socials }) => {
     let username = params.username;
     if (username.includes("%20")) {
         username = params.username.replace(/%20/g, " ");
     }
 
-    useEffect(() => {
-        getAccountUser();
-    }, []);
-
     return (
-        <div className="sticky top-[10rem] w-[35rem] flex flex-col items-center">
+        <div className="sticky top-[10rem] w-[25%] flex flex-col items-center">
             <Avatar
-                name={accountUser?.username}
-                src={accountUser?.profilePic?.url}
+                name={userData?.username}
+                src={userData?.profilePic?.url}
                 size="2xl"
                 mt="-4rem"
             />
@@ -36,9 +28,11 @@ const ProfileInfo = ({ params, isOtherProfile }) => {
                     </Link>
                 )}
             </h1>
-            <p className="text-sm mt-2 text-gray-300">{accountUser?.bio}</p>
+            <p className="w-[70%] text-sm text-center mt-2 text-gray-300">
+                {userData?.bio}
+            </p>
 
-            <SocialsGrid />
+            <SocialsGrid socials={socials} />
         </div>
     );
 };

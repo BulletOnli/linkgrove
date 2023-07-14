@@ -24,8 +24,10 @@ import {
     FaReddit,
     FaYoutube,
 } from "react-icons/fa";
-import { updateAccountDetails } from "@/app/api/userApi";
 import { useUserStore } from "@/app/zustandStore/userStore";
+import { getRequest, putRequest } from "@/app/api/fetcher";
+import useSWR, { mutate } from "swr";
+import { redirect } from "next/navigation";
 
 const EditProfilePage = () => {
     const toast = useToast();
@@ -35,17 +37,24 @@ const EditProfilePage = () => {
 
     const { accountUser, getAccountUser } = useUserStore();
 
+    const profileDetails = useSWR(
+        `/users/user/${accountUser?.username}`,
+        getRequest
+    );
+
     const [username, setUsername] = useState(accountUser?.username);
     const [bio, setBio] = useState(accountUser?.bio);
-    const [facebook, setFacebook] = useState(accountUser?.facebook);
-    const [instagram, setInstagram] = useState(accountUser?.instagram);
-    const [twitter, setTwitter] = useState(accountUser?.twitter);
-    const [discord, setDiscord] = useState(accountUser?.discord);
-    const [reddit, setReddit] = useState(accountUser?.reddit);
-    const [telegram, setTelegram] = useState(accountUser?.telegram);
-    const [tiktok, setTiktok] = useState(accountUser?.tiktok);
-    const [youtube, setYoutube] = useState(accountUser?.youtube);
-    const [github, setGithub] = useState(accountUser?.github);
+    const [socialInputs, setSocialInputs] = useState(
+        profileDetails?.data?.socials
+    );
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setSocialInputs((state) => ({
+            ...state,
+            [name]: value,
+        }));
+    };
 
     const handleImgUpload = (e) => {
         const file = e.target.files[0];
@@ -66,15 +75,23 @@ const EditProfilePage = () => {
 
         try {
             setIsLoading(true);
-            await updateAccountDetails("/users/details", formData);
-            getAccountUser(); // update the account details
+            await putRequest("/users/details/update", formData);
+            getAccountUser(); // update the state of accountUser
+
+            if (socialInputs) {
+                await putRequest(
+                    `/socials/update?id=${profileDetails?.data?.socials?._id}`,
+                    socialInputs
+                );
+                profileDetails.mutate();
+            }
 
             setIsLoading(false);
             toast({
                 title: "Details Updated",
                 status: "success",
                 isClosable: true,
-                position: "top",
+                position: "bottom-left",
                 duration: 3000,
             });
             setPreviewImage("");
@@ -94,6 +111,11 @@ const EditProfilePage = () => {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem("weblinksToken");
+        if (!token) {
+            redirect("/login");
+        }
+
         getAccountUser();
     }, []);
 
@@ -151,6 +173,7 @@ const EditProfilePage = () => {
                                 setIsSomethingChanged(true);
                             }}
                             value={username}
+                            autoComplete="off"
                         />
                         <Input
                             type="text"
@@ -165,6 +188,7 @@ const EditProfilePage = () => {
                                 setIsSomethingChanged(true);
                             }}
                             value={bio}
+                            autoComplete="off"
                         />
                     </VStack>
                 </HStack>
@@ -180,10 +204,10 @@ const EditProfilePage = () => {
                             placeholder="Facebook"
                             borderColor="gray"
                             onChange={(e) => {
-                                setFacebook(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={facebook}
+                            value={socialInputs?.facebook}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -196,10 +220,10 @@ const EditProfilePage = () => {
                             placeholder="Instagram"
                             borderColor="gray"
                             onChange={(e) => {
-                                setInstagram(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={instagram}
+                            value={socialInputs?.instagram}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -212,10 +236,10 @@ const EditProfilePage = () => {
                             placeholder="Twitter"
                             borderColor="gray"
                             onChange={(e) => {
-                                setTwitter(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={twitter}
+                            value={socialInputs?.twitter}
                         />
                     </InputGroup>
 
@@ -229,10 +253,10 @@ const EditProfilePage = () => {
                             placeholder="Discord"
                             borderColor="gray"
                             onChange={(e) => {
-                                setDiscord(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={discord}
+                            value={socialInputs?.discord}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -245,10 +269,10 @@ const EditProfilePage = () => {
                             placeholder="Reddit"
                             borderColor="gray"
                             onChange={(e) => {
-                                setReddit(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={reddit}
+                            value={socialInputs?.reddit}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -264,10 +288,10 @@ const EditProfilePage = () => {
                             placeholder="Telegram"
                             borderColor="gray"
                             onChange={(e) => {
-                                setTelegram(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={telegram}
+                            value={socialInputs?.telegram}
                         />
                     </InputGroup>
 
@@ -281,10 +305,10 @@ const EditProfilePage = () => {
                             placeholder="Tiktok"
                             borderColor="gray"
                             onChange={(e) => {
-                                setTiktok(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={tiktok}
+                            value={socialInputs?.tiktok}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -297,10 +321,10 @@ const EditProfilePage = () => {
                             placeholder="Youtube"
                             borderColor="gray"
                             onChange={(e) => {
-                                setYoutube(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={youtube}
+                            value={socialInputs?.youtube}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -313,10 +337,10 @@ const EditProfilePage = () => {
                             placeholder="Github"
                             borderColor="gray"
                             onChange={(e) => {
-                                setGithub(e.target.value);
+                                handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={github}
+                            value={socialInputs?.github}
                         />
                     </InputGroup>
                 </div>

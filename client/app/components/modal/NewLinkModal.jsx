@@ -23,8 +23,7 @@ import {
 import { useState } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-
-import { createLink } from "@/app/api/linkApi";
+import { postRequest } from "@/app/api/fetcher";
 
 const NewLinkModal = ({ isOpen, onClose, mutate }) => {
     const toast = useToast();
@@ -48,7 +47,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
         const data = new FormData(e.target);
         try {
             setIsLoading(true);
-            await createLink("/links", data);
+            await postRequest("/links/create", data);
             mutate();
             setIsLoading(false);
             toast({
@@ -73,7 +72,13 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={onClose}>
+        <Modal
+            isOpen={isOpen}
+            onClose={() => {
+                onClose();
+                setPreviewImage("");
+            }}
+        >
             <FormControl as="form" onSubmit={handleSubmit}>
                 <ModalOverlay />
                 <ModalContent color="white" bg="#23232E">

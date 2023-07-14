@@ -2,18 +2,16 @@
 import LoginForm from "../components/form/LoginForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { useEffect } from "react";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
 
 const LoginPage = () => {
-    const router = useRouter();
-
     useEffect(() => {
         const token = localStorage.getItem("weblinksToken");
         if (token) {
-            router.push("/");
+            redirect("/");
         }
     }, []);
 
@@ -26,7 +24,6 @@ const LoginPage = () => {
                 >
                     WebLinks
                 </Link>
-                <div></div>
             </div>
 
             <div className="w-full h-screen flex justify-center items-center">
@@ -34,7 +31,7 @@ const LoginPage = () => {
             </div>
 
             <footer className="w-[70vw] flex p-6">
-                <p>© 2023 Gemmuel Dela Pena </p>
+                <p>© Gemmuel Dela Pena 2023</p>
                 <Spacer />
                 <HStack gap={4} fontSize={20}>
                     <Link

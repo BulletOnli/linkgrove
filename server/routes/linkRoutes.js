@@ -20,11 +20,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post("/", checkAuth, upload.single("thumbnail"), createLink);
-router
-    .route("/:id")
-    .get(getLink)
-    .delete(deleteLink)
-    .put(upload.single("thumbnail"), updateLink);
+router.route("/:id").get(getLink);
+
+router.post("/create", checkAuth, upload.single("thumbnail"), createLink);
+router.put("/update", upload.single("thumbnail"), updateLink);
+router.delete("/delete", deleteLink);
 
 module.exports = router;

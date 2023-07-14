@@ -1,5 +1,4 @@
 "use client";
-import LoginForm from "../components/form/LoginForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsGithub, BsInstagram } from "react-icons/bs";
@@ -24,7 +23,7 @@ const RegisterPage = () => {
             </div>
 
             <footer className="w-[70vw] flex p-6">
-                <p>© 2023 Gemmuel Dela Pena </p>
+                <p>© Gemmuel Dela Pena 2023</p>
                 <Spacer />
                 <HStack gap={4} fontSize={20}>
                     <Link

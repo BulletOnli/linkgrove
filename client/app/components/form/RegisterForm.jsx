@@ -9,9 +9,9 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
-import axios from "axios";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { registerUser } from "@/app/api/fetcher";
 
 const RegisterForm = () => {
     const router = useRouter();
@@ -32,11 +32,7 @@ const RegisterForm = () => {
 
         try {
             setIsLoading(true);
-            const response = await axios.post(
-                "http://localhost:8080/users/register",
-                registerDetails
-            );
-            localStorage.setItem("weblinksToken", response.data.token);
+            await registerUser("/users/register", registerDetails);
             setIsLoading(false);
             toast({
                 title: "Account Created!",
@@ -47,9 +43,10 @@ const RegisterForm = () => {
             });
             router.push(`/${registerDetails.username}`);
         } catch (error) {
+            console.log(error);
             setIsLoading(false);
             toast({
-                title: `Oops! ${error.response.data.error.message}.`,
+                title: `Oops! ${error.response.data.error.message}`,
                 status: "error",
                 isClosable: true,
                 position: "top",

@@ -39,7 +39,7 @@ const createLink = asyncHandler(async (req, res) => {
 });
 
 const deleteLink = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.query;
     try {
         // delete img in both cloudinary and local
         await deleteImg(id);
@@ -56,24 +56,20 @@ const deleteLink = asyncHandler(async (req, res) => {
 });
 
 const updateLink = asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const { id } = req.query;
+    const { title, url, github } = req.body;
 
     try {
         const link = await Link.findById(id);
+
         if (!link) {
             res.status(404);
             throw new Error("Link not found!");
         }
 
-        if (req.body.title) {
-            link.title = req.body.title;
-        }
-        if (req.body.url) {
-            link.url = req.body.url;
-        }
-        if (req.body.github) {
-            link.github = req.body.github;
-        }
+        link.title = title;
+        link.url = url;
+        link.github = github;
 
         if (req.file) {
             // upload new img

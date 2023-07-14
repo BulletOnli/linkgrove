@@ -22,11 +22,11 @@ const upload = multer({ storage });
 router.post("/register", registerUser);
 router.post("/login", loginUser);
 
-router.get("/user/:username", getUserProfile); // for specific user
+router.get("/user/:username", checkAuth, getUserProfile); // for specific user
 
 router.get("/details", checkAuth, getAccountDetails);
 router.put(
-    "/details",
+    "/details/update",
     checkAuth,
     upload.single("profilePic"),
     updateAccountDetails

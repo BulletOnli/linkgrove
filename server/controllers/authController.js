@@ -2,27 +2,34 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
+const Socials = require("../models/socialsModel");
 
 const generateToken = (_id) => {
     return jwt.sign({ _id }, process.env.JWT_SECRET, {
-        expiresIn: "3h",
+        expiresIn: "1d",
     });
 };
 
 const registerUser = asyncHandler(async (req, res) => {
     const { username, password, confirmPassword } = req.body;
     const user = await User.findOne({ username });
+
     if (user) {
         res.status(403);
         throw new Error("Username already exist!");
     }
+
+    if (password.length < 8) {
+        res.status(400);
+        throw new Error("Password must be greater than 8 characters");
+    }
+
     if (password !== confirmPassword) {
         res.status(403);
         throw new Error("Password incorrect!");
     }
 
     const hashedPassword = await bcrypt.hash(password, 12);
-
     const newUser = await User.create({
         username,
         password: hashedPassword,
@@ -34,6 +41,11 @@ const registerUser = asyncHandler(async (req, res) => {
         _id: newUser._id,
         bio: newUser.bio,
     };
+
+    // create instant document for socials accounts
+    await Socials.create({
+        creator: newUser._id,
+    });
 
     res.status(201).json({
         user: userDetails,

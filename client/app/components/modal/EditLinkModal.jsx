@@ -19,7 +19,7 @@ import {
 import { useState } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { updateLink } from "@/app/api/linkApi";
+import { putRequest } from "@/app/api/fetcher";
 
 const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
     const toast = useToast();
@@ -50,13 +50,8 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
         const formData = new FormData(e.target);
 
         try {
-            for (let [key, value] of formData) {
-                if (value === "") {
-                    formData.set(key, " ");
-                }
-            }
             setIsLoadingChanges(true);
-            await updateLink(`/links/${link?._id}`, formData);
+            await putRequest(`/links/update?id=${link?._id}`, formData);
             mutate();
             setIsLoadingChanges(false);
 
@@ -72,9 +67,8 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
             setIsSomethingChanged(false);
         } catch (error) {
             setIsLoadingChanges(false);
-            console.log(error);
             toast({
-                title: "Oops! Something went wrong.",
+                title: `Oops! ${error.response.data.error.message}`,
                 status: "error",
                 isClosable: true,
                 position: "top",
@@ -175,7 +169,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                 </InputLeftElement>
                                 <Input
                                     type="url"
-                                    placeholder="Repository"
+                                    placeholder="Repository (optional)"
                                     name="github"
                                     variant="filled"
                                     bg="gray.700"

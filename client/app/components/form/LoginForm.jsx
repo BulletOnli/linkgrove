@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
-import axios from "axios";
+import { loginUser } from "@/app/api/fetcher";
 
 const LoginForm = () => {
     const toast = useToast();
@@ -26,12 +26,7 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            const response = await axios.post(
-                "http://localhost:8080/users/login",
-                { username, password }
-            );
-            localStorage.setItem("weblinksToken", response.data.token);
-
+            await loginUser("/users/login", { username, password });
             setIsLoading(false);
             toast({
                 title: "Login Success!",
@@ -40,7 +35,7 @@ const LoginForm = () => {
                 position: "top",
                 duration: 3000,
             });
-            router.push(`/${username}`);
+            router.back();
         } catch (error) {
             setIsLoading(false);
             toast({
@@ -69,6 +64,7 @@ const LoginForm = () => {
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
+                        required
                         _hover={false}
                         autoComplete="off"
                         value={username}
@@ -87,6 +83,7 @@ const LoginForm = () => {
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
+                        required
                         _hover={false}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
