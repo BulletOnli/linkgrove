@@ -17,8 +17,10 @@ import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
 import { putRequest } from "../api/fetcher";
 import { useUserStore } from "../zustandStore/userStore";
+import { redirect, useRouter } from "next/navigation";
 
 const LinkCard = (props) => {
+    const router = useRouter();
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
     const { title, url, thumbnail, likes, github, _id } = props.link;
@@ -31,6 +33,10 @@ const LinkCard = (props) => {
     const userId = accountUser?._id;
 
     const toggleLike = async () => {
+        if (!localStorage.getItem("weblinksToken")) {
+            return router.push("/login");
+        }
+
         await putRequest(`/links/like?linkId=${_id}`, { userId });
         props.mutate();
     };
