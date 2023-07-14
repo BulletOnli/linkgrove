@@ -18,8 +18,8 @@ const linkSchema = new mongoose.Schema({
         },
     },
     likes: {
-        type: Number,
-        default: 0,
+        type: Map,
+        of: Boolean,
     },
     github: {
         type: String,

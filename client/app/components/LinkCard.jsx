@@ -9,18 +9,31 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { AiOutlineHeart, AiOutlineLink } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart, AiOutlineLink } from "react-icons/ai";
 import { BsGithub } from "react-icons/bs";
 import { FiExternalLink, FiEdit } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
+import { putRequest } from "../api/fetcher";
+import { useUserStore } from "../zustandStore/userStore";
 
 const LinkCard = (props) => {
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
     const { title, url, thumbnail, likes, github, _id } = props.link;
     const isOtherProfile = props.isOtherProfile;
+
+    const { accountUser } = useUserStore();
+
+    const isLiked = Object.keys(likes).find((id) => id === accountUser?._id);
+    const likeCount = !likes ? 0 : Object.keys(likes).length;
+    const userId = accountUser?._id;
+
+    const toggleLike = async () => {
+        await putRequest(`/links/like?linkId=${_id}`, { userId });
+        props.mutate();
+    };
 
     return (
         <>
@@ -85,14 +98,19 @@ const LinkCard = (props) => {
                                     <BsGithub className="cursor-pointer hover:text-blue-500" />
                                 </Link>
                             )}
-                            {/* {url && url.trim() !== "" && (
-                                <Link href={url || ""} target="_blank">
-                                    <FiExternalLink className="text-lg cursor-pointer hover:text-blue-500" />
-                                </Link>
-                            )} */}
                             <Flex alignItems="center" gap={1}>
-                                <AiOutlineHeart className="text-lg cursor-pointer " />
-                                <Text fontSize="sm">{likes}</Text>
+                                {isLiked ? (
+                                    <AiFillHeart
+                                        className="text-xl cursor-pointer text-red-700"
+                                        onClick={toggleLike}
+                                    />
+                                ) : (
+                                    <AiOutlineHeart
+                                        className="text-xl cursor-pointer "
+                                        onClick={toggleLike}
+                                    />
+                                )}
+                                <Text fontSize="sm">{likeCount}</Text>
                             </Flex>
                         </HStack>
                     </HStack>

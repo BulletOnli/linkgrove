@@ -6,6 +6,7 @@ const {
     deleteLink,
     updateLink,
     getLink,
+    toggleLike,
 } = require("../controllers/linkController");
 const checkAuth = require("../middleware/authMiddleware");
 
@@ -25,5 +26,7 @@ router.route("/:id").get(getLink);
 router.post("/create", checkAuth, upload.single("thumbnail"), createLink);
 router.put("/update", upload.single("thumbnail"), updateLink);
 router.delete("/delete", deleteLink);
+
+router.put("/like", toggleLike);
 
 module.exports = router;

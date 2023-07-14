@@ -32,6 +32,7 @@ const createLink = asyncHandler(async (req, res) => {
         url,
         thumbnail,
         github,
+        likes: {},
         creator: req.user.id,
     });
 
@@ -95,4 +96,33 @@ const updateLink = asyncHandler(async (req, res) => {
     }
 });
 
-module.exports = { getLink, createLink, deleteLink, updateLink };
+const toggleLike = asyncHandler(async (req, res) => {
+    const { linkId } = req.query;
+    const { userId } = req.body;
+
+    try {
+        const link = await Link.findById(linkId);
+        const isLiked = link.likes.get(userId);
+
+        if (isLiked) {
+            link.likes.delete(userId);
+        } else {
+            link.likes.set(userId, true);
+        }
+
+        const updatedLink = await Link.findByIdAndUpdate(
+            linkId,
+            {
+                likes: link.likes,
+            },
+            { new: true }
+        );
+
+        res.status(200).json(updatedLink);
+    } catch (error) {
+        res.status(404);
+        throw new Error("Cant like the link");
+    }
+});
+
+module.exports = { getLink, createLink, deleteLink, updateLink, toggleLike };
