@@ -102,6 +102,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
                                 rounded="lg"
                                 src={previewImage || link?.thumbnail.url}
                                 fallbackSrc="https://via.placeholder.com/400"
+                                alt="thumbnail"
                             />
                             <Button size="sm" w="full" colorScheme="teal">
                                 <label

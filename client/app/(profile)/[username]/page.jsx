@@ -41,6 +41,7 @@ const ProfilePage = ({ params }) => {
                 h="15rem"
                 objectFit="cover"
                 fallbackSrc="https://via.placeholder.com/1400"
+                alt="Banner"
             />
             <div className="relative w-full h-full flex p-4">
                 <ProfileInfo

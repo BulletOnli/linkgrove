@@ -75,6 +75,7 @@ const LinkCard = (props) => {
                         src={thumbnail.url}
                         roundedTop="xl"
                         fallbackSrc="https://via.placeholder.com/180"
+                        alt="thumbnail"
                     />
                 </Link>
                 <div className="w-full flex items-center justify-between py-2 px-3 gap-1">

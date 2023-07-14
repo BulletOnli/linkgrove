@@ -93,6 +93,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                 rounded="lg"
                                 src={previewImage}
                                 fallbackSrc="https://via.placeholder.com/400"
+                                alt="Thumbnail preview"
                             />
                             <Button size="sm" w="full" colorScheme="teal">
                                 <label

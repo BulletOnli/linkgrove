@@ -101,7 +101,7 @@ const LoginForm = () => {
                 </Button>
             </FormControl>
             <p className="text-sm my-2">
-                Don't have an account?{" "}
+                Dont have an account?{" "}
                 <Link href="/register" className="text-blue-500">
                     Register
                 </Link>

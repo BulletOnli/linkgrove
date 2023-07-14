@@ -57,7 +57,7 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
                         Delete Link
                     </AlertDialogHeader>
                     <AlertDialogBody>
-                        Are you sure? You can't undo this action afterwards.
+                        Are you sure? You cant undo this action afterwards.
                     </AlertDialogBody>
                     <AlertDialogFooter>
                         <Button ref={cancelRef} onClick={onClose}>
