@@ -34,11 +34,10 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     const { username, bio } = req.body;
 
     try {
-        const account = await User.findById(req.user._id);
-        const accountDetails = await User.findByIdAndUpdate(req.user._id, {
-            username,
-            bio,
-        });
+        const accountDetails = await User.findById(req.user._id);
+
+        accountDetails.username = username;
+        accountDetails.bio = bio;
 
         if (req.file) {
             const img = await uploadImg(req.file);
@@ -46,10 +45,10 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
                 url: img.url,
                 id: img.asset_id,
             };
-            account.profilePic = profilePic;
-
-            await account.save();
+            accountDetails.profilePic = profilePic;
         }
+
+        await accountDetails.save();
 
         res.status(200).json(accountDetails);
     } catch (error) {

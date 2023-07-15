@@ -43,7 +43,7 @@ const ProfilePage = ({ params }) => {
                 fallbackSrc="https://via.placeholder.com/1400"
                 alt="Banner"
             />
-            <div className="relative w-full h-full flex flex-col items-center lg:flex-row p-4 gap-4 lg:gap-0">
+            <div className="relative w-full h-full flex flex-col items-center lg:flex-row lg:items-start p-4 gap-4 lg:gap-0">
                 <ProfileInfo
                     userData={data?.user}
                     isOtherProfile={isOtherProfile}
