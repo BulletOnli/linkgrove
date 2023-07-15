@@ -52,7 +52,7 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
             onClose={onClose}
         >
             <AlertDialogOverlay>
-                <AlertDialogContent>
+                <AlertDialogContent m={4}>
                     <AlertDialogHeader fontSize="lg" fontWeight="bold">
                         Delete Link
                     </AlertDialogHeader>

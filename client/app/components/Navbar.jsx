@@ -37,8 +37,11 @@ const Navbar = () => {
 
     return (
         <div className="absolute z-20 w-full flex justify-between py-4 px-6">
-            <Link href="/" className="text-2xl font-extrabold tracking-wider">
-                WebLinks
+            <Link
+                href="/"
+                className="text-[#00CCCC] text-2xl font-extrabold tracking-wider"
+            >
+                LinkGrove
             </Link>
 
             {Object.keys(accountUser).length > 0 ? (

@@ -17,12 +17,12 @@ const LoginPage = () => {
 
     return (
         <div className="relative w-full flex flex-col justify-center items-center">
-            <div className="absolute top-0 w-[70vw] flex items-center justify-between p-6">
+            <div className="absolute top-0 w-full lg:w-[70vw] flex items-center justify-between p-6">
                 <Link
                     href="/"
-                    className="text-3xl text-[#00CCCC] font-extrabold tracking-wider"
+                    className="text-xl lg:text-3xl text-[#00CCCC] font-extrabold tracking-wider"
                 >
-                    WebLinks
+                    LinkGrove
                 </Link>
             </div>
 
@@ -30,10 +30,10 @@ const LoginPage = () => {
                 <LoginForm />
             </div>
 
-            <footer className="w-[70vw] flex p-6">
-                <p>© Gemmuel Dela Pena 2023</p>
+            <footer className="w-full lg:w-[70vw] flex p-6">
+                <p className="text-xs lg:text-base">© Gemmuel Dela Pena 2023</p>
                 <Spacer />
-                <HStack gap={4} fontSize={20}>
+                <HStack gap={4} fontSize={{ sm: 10, lg: 20 }}>
                     <Link
                         href="https://github.com/BulletOnli"
                         target="_blank"

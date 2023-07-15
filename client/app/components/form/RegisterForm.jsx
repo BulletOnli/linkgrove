@@ -56,7 +56,7 @@ const RegisterForm = () => {
     };
 
     return (
-        <div className="w-[28rem]  bg-[#23232E] flex flex-col items-center p-8 rounded-xl">
+        <div className="w-[28rem]  bg-[#23232E] flex flex-col items-center p-4 lg:p-8 rounded-xl m-4">
             <h1 className="text-4xl font-bold mb-6">Register</h1>
             <FormControl as="form" onSubmit={handleSubmit}>
                 <InputGroup mb={2}>

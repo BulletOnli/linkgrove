@@ -38,12 +38,12 @@ const ProfilePage = ({ params }) => {
             <Image
                 w="full"
                 src="/pc.png"
-                h="15rem"
+                h={{ sm: "10rem", lg: "15rem" }}
                 objectFit="cover"
                 fallbackSrc="https://via.placeholder.com/1400"
                 alt="Banner"
             />
-            <div className="relative w-full h-full flex p-4">
+            <div className="relative w-full h-full flex flex-col items-center lg:flex-row p-4 gap-4 lg:gap-0">
                 <ProfileInfo
                     userData={data?.user}
                     isOtherProfile={isOtherProfile}
@@ -51,7 +51,7 @@ const ProfilePage = ({ params }) => {
                     socials={data?.socials}
                 />
 
-                <div className="w-[75%] flex flex-col gap-4 p-4">
+                <div className="w-full lg:w-[70%] flex flex-col gap-4 p-4">
                     <HStack w="full">
                         <HStack>
                             <FormControl>

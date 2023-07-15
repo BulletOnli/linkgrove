@@ -90,7 +90,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
         <Modal isOpen={isOpen} onClose={handleClose}>
             <FormControl as="form" onSubmit={handleSubmit}>
                 <ModalOverlay />
-                <ModalContent color="white" bg="#23232E">
+                <ModalContent color="white" bg="#23232E" m={4}>
                     <ModalHeader>Edit Link</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>

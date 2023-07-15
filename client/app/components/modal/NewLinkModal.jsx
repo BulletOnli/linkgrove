@@ -81,7 +81,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
         >
             <FormControl as="form" onSubmit={handleSubmit}>
                 <ModalOverlay />
-                <ModalContent color="white" bg="#23232E">
+                <ModalContent color="white" bg="#23232E" m={4}>
                     <ModalHeader>Create new link</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>

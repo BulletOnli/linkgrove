@@ -14,7 +14,7 @@ import {
 
 const SocialsGrid = ({ socials }) => {
     return (
-        <div className="grid grid-cols-3 justify-items-center gap-4 px-4 2xl:px-0 mt-10">
+        <div className="grid grid-cols-3 justify-items-center gap-4 2xl:px-0 mt-4 lg:mt-10">
             <Button
                 as={socials?.facebook ? Link : ""}
                 href={`${socials?.facebook}`}

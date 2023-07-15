@@ -5,7 +5,7 @@ const App = dynamic(() => import("./App"), {
 });
 
 export const metadata = {
-    title: "WebLinks",
+    title: "LinkGrove",
     description: "Unite all your links in one website",
 };
 

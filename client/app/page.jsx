@@ -9,8 +9,8 @@ const HomePage = () => {
 
     return (
         <div className="w-full flex flex-col items-center p-4">
-            <main className="w-full h-screen flex p-4 ">
-                <div className="w-[50%] h-full text-[#D1D5DB] flex flex-col items-center justify-center gap-2 p-4">
+            <main className="w-full h-screen flex flex-col items-center lg:flex-row p-4 ">
+                <div className="w-full lg:w-[50%] h-full text-[#D1D5DB] flex flex-col items-center justify-center gap-2 p-4">
                     <h1 className="text-center text-4xl font-bold">
                         Connect, Share, Discover: <br /> Your Unified Profile
                         Experience
@@ -27,7 +27,7 @@ const HomePage = () => {
                         {token ? "View Profile" : "Get Started"}
                     </Button>
                 </div>
-                <div className="w-[50%] h-full flex justify-center items-center">
+                <div className="w-full lg:w-[50%] h-full flex justify-center items-center">
                     <img
                         src="/globe.svg"
                         alt="homepage logo"
@@ -36,7 +36,7 @@ const HomePage = () => {
                 </div>
             </main>
 
-            <div className="w-full flex items-center justify-center gap-16">
+            <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-16">
                 <div className="w-[15rem]  flex flex-col items-center justify-center p-6 border border-[#FFFFFF31]  rounded-lg">
                     <img src="/profileicon.png" alt="" />
                     <h1 className="mt-3">Profile</h1>
@@ -66,15 +66,15 @@ const HomePage = () => {
                     </small>
                 </div>
             </div>
-            <footer className="w-[70vw] p-4 border-t border-t-gray-500 grid xl:grid-cols-4 justify-items-center items-center mt-[20rem]">
-                <div className="w-full h-full flex flex-col justify-center">
+            <footer className="w-full lg:w-[70vw] p-4 border-t border-t-gray-500 grid xl:grid-cols-4 justify-items-center items-center mt-[5rem] lg:mt-[20rem]">
+                <div className="w-full h-full flex flex-col justify-center mb-6 lg:mb-0">
                     <Link
                         href="/"
-                        className="text-3xl text-[#00CCCC] font-extrabold tracking-wider"
+                        className="text-lg lg:text-3xl text-[#00CCCC] font-extrabold tracking-wider"
                     >
-                        WebLinks
+                        LinkGrove
                     </Link>
-                    <p className="text-sm text-gray-400 mt-1">
+                    <p className="text-sm lg:text-sm text-gray-400 mt-1">
                         © Gemmuel Dela Pena 2023
                     </p>
                 </div>
