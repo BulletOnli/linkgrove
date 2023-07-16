@@ -42,8 +42,9 @@ const createLink = asyncHandler(async (req, res) => {
 const deleteLink = asyncHandler(async (req, res) => {
     const { id } = req.query;
     try {
+        const link = await Link.findById(id);
         // delete img in both cloudinary and local
-        await deleteImg(id);
+        await deleteImg(link?.thumbnail?._id);
         // delete link in the db
         await Link.findByIdAndDelete(id);
 
