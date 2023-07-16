@@ -35,7 +35,7 @@ const LoginForm = () => {
                 position: "top",
                 duration: 3000,
             });
-            router.back();
+            router.push(`/${username}`);
         } catch (error) {
             setIsLoading(false);
             toast({
