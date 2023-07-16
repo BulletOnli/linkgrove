@@ -1,16 +1,9 @@
 const asyncHandler = require("express-async-handler");
 const cloudinary = require("cloudinary");
-const Link = require("../models/linkModel");
-const fs = require("fs");
-const path = require("path");
 
-const getImg = asyncHandler(async (id) => {
+const getImg = asyncHandler(async (imgId) => {
     try {
-        const link = await Link.findById(id);
-
-        return await cloudinary.v2.api.resource_by_asset_id([
-            link.thumbnail.id,
-        ]);
+        return await cloudinary.v2.api.resource_by_asset_id([imgId]);
     } catch (error) {
         throw new Error("Img not Found");
     }
@@ -27,17 +20,9 @@ const uploadImg = asyncHandler(async ({ path, originalname }) => {
     );
 });
 
-// only works in links, cannot be used in profile picture
-const deleteImg = asyncHandler(async (id) => {
-    const img = await getImg(id);
+const deleteImg = asyncHandler(async (imgId) => {
+    const img = await getImg(imgId);
     try {
-        // delete img in local
-        const filePath = path.join(__dirname, `../uploads/${img.public_id}`);
-        fs.unlink(filePath, (err) => {
-            if (err) throw new Error("File deleting Failed");
-        });
-
-        // delete img in cloudinary
         return await cloudinary.v2.api.delete_resources([img.public_id], {
             type: "upload",
             resource_type: "image",

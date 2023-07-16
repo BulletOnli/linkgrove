@@ -73,10 +73,9 @@ const updateLink = asyncHandler(async (req, res) => {
         link.github = github;
 
         if (req.file) {
-            // upload new img
             const img = await uploadImg(req.file);
-            // Delete old image in both cloudinary and local
-            await deleteImg(id);
+            // delete previous img
+            await deleteImg(link?.thumbnail?.id);
 
             const thumbnail = {
                 url: img.url,

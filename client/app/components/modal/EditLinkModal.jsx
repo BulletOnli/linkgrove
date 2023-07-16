@@ -66,6 +66,7 @@ const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
             setPreviewImage("");
             setIsSomethingChanged(false);
         } catch (error) {
+            console.log(error);
             setIsLoadingChanges(false);
             toast({
                 title: `Oops! ${error.response.data.error.message}`,

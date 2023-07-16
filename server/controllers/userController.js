@@ -41,6 +41,9 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
         if (req.file) {
             const img = await uploadImg(req.file);
+            // delete previous img
+            await deleteImg(accountDetails?.profilePic?.id);
+
             const profilePic = {
                 url: img.url,
                 id: img.asset_id,
