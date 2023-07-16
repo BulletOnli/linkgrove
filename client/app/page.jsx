@@ -9,13 +9,13 @@ const HomePage = () => {
 
     return (
         <div className="w-full flex flex-col items-center p-4">
-            <main className="w-full h-screen flex flex-col items-center lg:flex-row p-4 ">
-                <div className="w-full lg:w-[50%] h-full text-[#D1D5DB] flex flex-col items-center justify-center gap-2 p-4">
+            <main className="w-full lg:h-screen flex flex-col items-center lg:flex-row p-4 mt-12 gap-6 lg:gap-0">
+                <div className="w-full lg:w-[50%] h-full text-[#D1D5DB] flex flex-col items-center justify-center gap-2 lg:p-4">
                     <h1 className="text-center text-4xl font-bold">
                         Connect, Share, Discover: <br /> Your Unified Profile
                         Experience
                     </h1>
-                    <p className="text-gray-300">
+                    <p className="text-gray-300 text-center">
                         Discover and share all your important links in one place
                     </p>
                     <Button

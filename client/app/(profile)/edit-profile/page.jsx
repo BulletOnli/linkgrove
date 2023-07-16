@@ -42,8 +42,8 @@ const EditProfilePage = () => {
         getRequest
     );
 
-    const [username, setUsername] = useState(accountUser?.username);
-    const [bio, setBio] = useState(accountUser?.bio);
+    const [username, setUsername] = useState("");
+    const [bio, setBio] = useState("");
     const [socialInputs, setSocialInputs] = useState(
         profileDetails?.data?.socials
     );
@@ -76,7 +76,6 @@ const EditProfilePage = () => {
         try {
             setIsLoading(true);
             await putRequest("/users/details/update", formData);
-            getAccountUser(); // update the state of accountUser
 
             if (socialInputs) {
                 await putRequest(
@@ -85,6 +84,7 @@ const EditProfilePage = () => {
                 );
                 profileDetails.mutate();
             }
+            getAccountUser(); // update the state of accountUser
 
             setIsLoading(false);
             toast({
@@ -115,8 +115,8 @@ const EditProfilePage = () => {
         if (!token) {
             redirect("/login");
         }
-
-        getAccountUser();
+        setUsername(accountUser?.username);
+        setBio(accountUser?.bio);
     }, []);
 
     return (
@@ -172,7 +172,7 @@ const EditProfilePage = () => {
                                 setUsername(e.target.value);
                                 setIsSomethingChanged(true);
                             }}
-                            value={username}
+                            value={username ?? ""}
                             autoComplete="off"
                         />
                         <Input
@@ -187,7 +187,7 @@ const EditProfilePage = () => {
                                 setBio(e.target.value);
                                 setIsSomethingChanged(true);
                             }}
-                            value={bio}
+                            value={bio ?? ""}
                             autoComplete="off"
                         />
                     </VStack>
@@ -207,7 +207,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.facebook}
+                            value={socialInputs?.facebook ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -223,7 +223,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.instagram}
+                            value={socialInputs?.instagram ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -239,7 +239,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.twitter}
+                            value={socialInputs?.twitter ?? ""}
                         />
                     </InputGroup>
 
@@ -256,7 +256,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.discord}
+                            value={socialInputs?.discord ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -272,7 +272,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.reddit}
+                            value={socialInputs?.reddit ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -291,7 +291,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.telegram}
+                            value={socialInputs?.telegram ?? ""}
                         />
                     </InputGroup>
 
@@ -308,7 +308,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.tiktok}
+                            value={socialInputs?.tiktok ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -324,7 +324,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.youtube}
+                            value={socialInputs?.youtube ?? ""}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -340,7 +340,7 @@ const EditProfilePage = () => {
                                 handleInputChange(e);
                                 setIsSomethingChanged(true);
                             }}
-                            value={socialInputs?.github}
+                            value={socialInputs?.github ?? ""}
                         />
                     </InputGroup>
                 </div>
