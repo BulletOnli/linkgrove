@@ -14,6 +14,10 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 
+app.get("/", (req, res) => {
+    res.status(200).json("Hello World");
+});
+
 // routes
 app.use("/users", require("./routes/userRoutes"));
 app.use("/links", require("./routes/linkRoutes"));
