@@ -1,5 +1,5 @@
 "use client";
-import { Button, Spacer } from "@chakra-ui/react";
+import { Button, Image, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
 import { useUserStore } from "./zustandStore/userStore";
 
@@ -28,7 +28,7 @@ const HomePage = () => {
                     </Button>
                 </div>
                 <div className="w-full lg:w-[50%] h-full flex justify-center items-center">
-                    <img
+                    <Image
                         src="/globe.svg"
                         alt="homepage logo"
                         className="w-[40rem]"
@@ -38,28 +38,28 @@ const HomePage = () => {
 
             <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-16">
                 <div className="w-[15rem]  flex flex-col items-center justify-center p-6 border border-[#FFFFFF31]  rounded-lg">
-                    <img src="/profileicon.png" alt="" />
+                    <Image src="/profileicon.png" alt="" />
                     <h1 className="mt-3">Profile</h1>
                     <small className="text-gray-400">
                         Customize your Profile
                     </small>
                 </div>
                 <div className="w-[15rem]  flex flex-col items-center justify-center p-6 border border-[#FFFFFF31] rounded-lg">
-                    <img src="/socialicon.png" alt="" />
+                    <Image src="/socialicon.png" alt="" />
                     <h1 className="mt-3 ">Social Accounts</h1>
                     <small className="text-gray-400">
                         Link all your social accounts
                     </small>
                 </div>
                 <div className="w-[15rem]  flex flex-col items-center justify-center p-6 border border-[#FFFFFF31]  rounded-lg">
-                    <img src="/linkicon.png" alt="" />
+                    <Image src="/linkicon.png" alt="" />
                     <h1 className="mt-3 ">Links</h1>
                     <small className="text-gray-400">
                         Share different links
                     </small>
                 </div>
                 <div className="w-[15rem] flex flex-col items-center justify-center p-6 border border-[#FFFFFF31] rounded-lg">
-                    <img src="/reactionicon.png" alt="" />
+                    <Image src="/reactionicon.png" alt="" />
                     <h1 className="mt-3 ">Reactions</h1>
                     <small className="text-gray-400">
                         Gain lots of reactions

@@ -129,12 +129,11 @@ const EditProfilePage = () => {
                 as="form"
                 onSubmit={handleSubmit}
             >
-                <HStack>
+                <div className="flex flex-col lg:flex-row items-center">
                     <Avatar
                         name={accountUser?.username}
                         src={previewImage || accountUser?.profilePic?.url}
                         size="2xl"
-                        mt="-4rem"
                     >
                         <Button
                             size="xs"
@@ -160,7 +159,7 @@ const EditProfilePage = () => {
                             />
                         </Button>
                     </Avatar>
-                    <VStack gap={0} ml={4} mt={-16}>
+                    <VStack gap={0} ml={4}>
                         <FormLabel w="full" fontWeight="semibold">
                             Username:
                         </FormLabel>
@@ -191,7 +190,7 @@ const EditProfilePage = () => {
                             autoComplete="off"
                         />
                     </VStack>
-                </HStack>
+                </div>
 
                 <div className="grid grid-cols-3 justify-items-center gap-4 mt-[4rem]">
                     <InputGroup>
