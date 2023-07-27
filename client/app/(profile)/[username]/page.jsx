@@ -51,8 +51,8 @@ const ProfilePage = ({ params }) => {
                     socials={data?.socials}
                 />
 
-                <div className="w-full lg:w-[70%] flex flex-col gap-4 p-4">
-                    <HStack w="full">
+                <div className="w-full flex flex-col p-4">
+                    <HStack w="full" mb={6}>
                         <HStack>
                             <FormControl>
                                 <InputGroup>
@@ -75,7 +75,7 @@ const ProfilePage = ({ params }) => {
                         )}
                     </HStack>
 
-                    <div className="w-full p-4 grid justify-items-center grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 2xl:xl:grid-cols-4 gap-8">
+                    <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4 lg:gap-8">
                         {isLoading ? "Loading Links..." : ""}
 
                         {data?.links?.map((link) => (
