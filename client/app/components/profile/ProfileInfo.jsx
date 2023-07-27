@@ -10,7 +10,7 @@ const ProfileInfo = ({ userData, params, isOtherProfile, socials }) => {
     }
 
     return (
-        <div className="xl:sticky xl:top-[10rem] w-full lg:w-[30%] lg:h-[35rem] flex flex-col items-center">
+        <div className="xl:sticky xl:top-[10rem] w-full lg:w-[25%] lg:h-[35rem] flex flex-col items-center">
             <Avatar
                 name={userData?.username}
                 src={userData?.profilePic?.url}

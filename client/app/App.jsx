@@ -2,7 +2,6 @@
 import { usePathname } from "next/navigation";
 import { ChakraProvider } from "@chakra-ui/react";
 import Navbar from "./components/Navbar";
-import { ErrorBoundary } from "react-error-boundary";
 import NextTopLoader from "nextjs-toploader";
 
 const App = ({ children }) => {

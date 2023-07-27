@@ -37,7 +37,7 @@ const ProfilePage = ({ params }) => {
         <div className="w-full min-h-screen flex flex-col items-center">
             <Image
                 w="full"
-                src="/pc.png"
+                src="/pc.webp"
                 h={{ sm: "10rem", lg: "15rem" }}
                 objectFit="cover"
                 fallbackSrc="https://via.placeholder.com/1400"
