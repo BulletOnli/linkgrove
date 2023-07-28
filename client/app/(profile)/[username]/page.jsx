@@ -75,7 +75,7 @@ const ProfilePage = ({ params }) => {
                         )}
                     </HStack>
 
-                    <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4 lg:gap-8">
+                    <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-8">
                         {isLoading ? "Loading Links..." : ""}
 
                         {data?.links?.map((link) => (

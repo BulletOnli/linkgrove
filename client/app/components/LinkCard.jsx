@@ -43,7 +43,7 @@ const LinkCard = (props) => {
 
     return (
         <>
-            <div className="bg-black relative w-[18rem] 2xl:w-[17rem] flex flex-col items-center border border-[#FFFFFF31] hover:shadow-custom4 rounded-xl">
+            <div className="bg-black relative w-[18rem] flex flex-col items-center border border-[#FFFFFF31] hover:shadow-custom4 rounded-xl">
                 {!isOtherProfile && (
                     <VStack
                         position="absolute"
