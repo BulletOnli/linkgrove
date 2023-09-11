@@ -7,12 +7,19 @@ const errorHandler = require("./middleware/errorHandler");
 const cloudinary = require("cloudinary");
 const morgan = require("morgan");
 const cors = require("cors");
+const helmet = require("helmet");
 
 // middlewares
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+app.use(helmet());
+app.use(
+    cors({
+        origin: "*",
+        credentials: true,
+    })
+);
 
 app.get("/", (req, res) => {
     res.status(200).json("Hello World");
