@@ -4,7 +4,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 import NextTopLoader from "nextjs-toploader";
 import Navbar from "../components/Navbar";
 
-const App = ({ children }) => {
+const App = ({ children }: { children: React.ReactNode }) => {
     const pathname = usePathname();
     const hideNav = pathname === "/login" || pathname === "/register";
 

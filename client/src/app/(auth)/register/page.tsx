@@ -1,9 +1,9 @@
 "use client";
+import RegisterForm from "@/src/components/form/RegisterForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
-import RegisterForm from "../../components/form/RegisterForm";
 
 const RegisterPage = () => {
     return (

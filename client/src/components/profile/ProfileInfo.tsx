@@ -1,12 +1,28 @@
 import { Avatar } from "@chakra-ui/react";
-import SocialsGrid from "./SocialsGrid";
+import SocialsGrid, { SocialsType } from "./SocialsGrid";
 import Link from "next/link";
 import { FiEdit } from "react-icons/fi";
+import { UserType } from "@/src/zustandStore/userStore";
 
-const ProfileInfo = ({ userData, params, isOtherProfile, socials }) => {
-    let username = params.username;
+type ProfileInfoProps = {
+    userData: UserType;
+    params: string;
+    isOtherProfile: boolean;
+    socials: SocialsType;
+};
+
+const ProfileInfo = ({
+    userData,
+    params,
+    isOtherProfile,
+    socials,
+}: ProfileInfoProps) => {
+    console.log(userData);
+    console.log(socials);
+
+    let username = params;
     if (username.includes("%20")) {
-        username = params.username.replace(/%20/g, " ");
+        username = params.replace(/%20/g, " ");
     }
 
     return (

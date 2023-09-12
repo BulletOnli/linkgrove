@@ -16,17 +16,36 @@ import { FaTrash } from "react-icons/fa";
 import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
 import { putRequest } from "../api/fetcher";
-import { useUserStore } from "../zustandStore/userStore";
 import { redirect, useRouter } from "next/navigation";
+import userStore from "../zustandStore/userStore";
 
-const LinkCard = (props) => {
+export type LinkType = {
+    creator: string;
+    github: string;
+    likes: {};
+    thumbnail: {
+        url: string;
+        id: string;
+    };
+    title: string;
+    url: string;
+    _id: string;
+};
+
+type LinkCardProps = {
+    isOtherProfile: boolean;
+    link: LinkType;
+    mutate: () => void;
+};
+
+const LinkCard = (props: LinkCardProps) => {
     const router = useRouter();
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
     const { title, url, thumbnail, likes, github, _id } = props.link;
     const isOtherProfile = props.isOtherProfile;
 
-    const { accountUser } = useUserStore();
+    const { accountUser } = userStore();
 
     const isLiked = Object.keys(likes).find((id) => id === accountUser?._id);
     const likeCount = !likes ? 0 : Object.keys(likes).length;

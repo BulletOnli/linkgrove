@@ -1,6 +1,5 @@
 "use client";
 import {
-    Avatar,
     Modal,
     ModalOverlay,
     ModalContent,
@@ -9,32 +8,49 @@ import {
     ModalBody,
     ModalCloseButton,
     useToast,
-    Flex,
     FormControl,
     Image,
-    HStack,
     VStack,
     Button,
     Input,
     InputGroup,
     InputLeftElement,
-    Spacer,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useState, ChangeEvent, FormEvent } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { postRequest } from "@/src/api/fetcher";
+import { putRequest } from "@/src/api/fetcher";
+import { LinkType } from "../LinkCard";
 
-const NewLinkModal = ({ isOpen, onClose, mutate }) => {
+type EditLinkModalProps = {
+    link: LinkType;
+    isOpen: boolean;
+    onClose: () => void;
+    mutate: () => void;
+};
+
+const EditLinkModal = ({
+    link,
+    isOpen,
+    onClose,
+    mutate,
+}: EditLinkModalProps) => {
     const toast = useToast();
-    const [previewImage, setPreviewImage] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
+    const [previewImage, setPreviewImage] = useState<ArrayBuffer | string>("");
+    const [isLoadingChanges, setIsLoadingChanges] = useState(false);
+    const [isSomethingChanged, setIsSomethingChanged] = useState(false);
 
-    const handleImgUpload = (e) => {
-        const file = e.target.files[0];
+    // Set default value of inputs
+    const [title, setTitle] = useState(link?.title);
+    const [url, setUrl] = useState(link?.url);
+    const [github, setGithub] = useState(link?.github);
+
+    const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target?.files?.[0];
         const reader = new FileReader();
         reader.onload = () => {
-            setPreviewImage(reader.result);
+            setPreviewImage(reader.result as string);
+            setIsSomethingChanged(true);
         };
 
         if (file) {
@@ -42,16 +58,18 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const data = new FormData(e.target);
+        const formData = new FormData(e.target as HTMLFormElement);
+
         try {
-            setIsLoading(true);
-            await postRequest("/links/create", data);
+            setIsLoadingChanges(true);
+            await putRequest(`/links/update?id=${link?._id}`, formData);
             mutate();
-            setIsLoading(false);
+            setIsLoadingChanges(false);
+
             toast({
-                title: "New link created!",
+                title: "Link Updated",
                 status: "success",
                 isClosable: true,
                 position: "bottom-left",
@@ -59,10 +77,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
             });
             onClose();
             setPreviewImage("");
-        } catch (error) {
-            setIsLoading(false);
+            setIsSomethingChanged(false);
+        } catch (error: any) {
+            console.log(error);
+            setIsLoadingChanges(false);
             toast({
-                title: "Oops! Something went wrong.",
+                title: `Oops! ${error.response.data.error.message}`,
                 status: "error",
                 isClosable: true,
                 position: "top",
@@ -71,18 +91,21 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
         }
     };
 
+    const handleClose = () => {
+        setPreviewImage("");
+        setTitle(link?.title);
+        setUrl(link?.url);
+        setGithub(link?.github);
+        setIsSomethingChanged(false);
+        onClose();
+    };
+
     return (
-        <Modal
-            isOpen={isOpen}
-            onClose={() => {
-                onClose();
-                setPreviewImage("");
-            }}
-        >
-            <FormControl as="form" onSubmit={handleSubmit}>
+        <Modal isOpen={isOpen} onClose={handleClose}>
+            <form onSubmit={handleSubmit}>
                 <ModalOverlay />
                 <ModalContent color="white" bg="#23232E" m={4}>
-                    <ModalHeader>Create new link</ModalHeader>
+                    <ModalHeader>Edit Link</ModalHeader>
                     <ModalCloseButton />
                     <ModalBody>
                         <VStack>
@@ -91,9 +114,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                 h="12rem"
                                 objectFit="cover"
                                 rounded="lg"
-                                src={previewImage}
+                                src={
+                                    previewImage.toString() ||
+                                    link?.thumbnail.url
+                                }
                                 fallbackSrc="https://via.placeholder.com/400"
-                                alt="Thumbnail preview"
+                                alt="thumbnail"
                             />
                             <Button size="sm" w="full" colorScheme="teal">
                                 <label
@@ -109,7 +135,6 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                     id="thumbnail-upload"
                                     className="hidden"
                                     name="thumbnail"
-                                    required
                                 />
                             </Button>
                         </VStack>
@@ -126,9 +151,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
-                                    _hover={false}
                                     autoComplete="off"
-                                    required
+                                    value={title}
+                                    onChange={(e) => {
+                                        setTitle(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -143,9 +171,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
-                                    _hover={false}
                                     autoComplete="off"
-                                    required
+                                    value={url}
+                                    onChange={(e) => {
+                                        setUrl(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -154,34 +185,41 @@ const NewLinkModal = ({ isOpen, onClose, mutate }) => {
                                 </InputLeftElement>
                                 <Input
                                     type="url"
-                                    placeholder="Repository (Optional)"
+                                    placeholder="Repository (optional)"
                                     name="github"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
-                                    _hover={false}
                                     autoComplete="off"
+                                    value={github}
+                                    onChange={(e) => {
+                                        setGithub(e.target.value);
+                                        setIsSomethingChanged(true);
+                                    }}
                                 />
                             </InputGroup>
                         </VStack>
                     </ModalBody>
 
                     <ModalFooter>
+                        <Button mr={2} onClick={handleClose}>
+                            Cancel
+                        </Button>
                         <Button
-                            isDisabled={!previewImage}
+                            isDisabled={!isSomethingChanged}
                             type="submit"
                             colorScheme="teal"
-                            isLoading={isLoading}
+                            isLoading={isLoadingChanges}
                             spinnerPlacement="start"
                         >
-                            Create
+                            Save Changes
                         </Button>
                     </ModalFooter>
                 </ModalContent>
-            </FormControl>
+            </form>
         </Modal>
     );
 };
 
-export default NewLinkModal;
+export default EditLinkModal;

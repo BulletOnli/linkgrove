@@ -1,17 +1,15 @@
 "use client";
 import {
     Button,
-    HStack,
     Avatar,
     Input,
     InputGroup,
     InputLeftElement,
     VStack,
     FormLabel,
-    FormControl,
     useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { BsFillCameraFill } from "react-icons/bs";
 import {
     FaTiktok,
@@ -24,10 +22,11 @@ import {
     FaReddit,
     FaYoutube,
 } from "react-icons/fa";
-import { useUserStore } from "@/src/zustandStore/userStore";
 import { getRequest, putRequest } from "@/src/api/fetcher";
 import useSWR, { mutate } from "swr";
 import { redirect } from "next/navigation";
+import userStore from "@/src/zustandStore/userStore";
+import { SocialsType } from "@/src/components/profile/SocialsGrid";
 
 const EditProfilePage = () => {
     const toast = useToast();
@@ -35,7 +34,7 @@ const EditProfilePage = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSomethingChanged, setIsSomethingChanged] = useState(false);
 
-    const { accountUser, getAccountUser } = useUserStore();
+    const { accountUser, getAccountUser } = userStore();
 
     const profileDetails = useSWR(
         `/users/user/${accountUser?.username}`,
@@ -48,19 +47,19 @@ const EditProfilePage = () => {
         profileDetails?.data?.socials
     );
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setSocialInputs((state) => ({
+        setSocialInputs((state: SocialsType) => ({
             ...state,
             [name]: value,
         }));
     };
 
-    const handleImgUpload = (e) => {
-        const file = e.target.files[0];
+    const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        const file = e.target?.files?.[0];
         const reader = new FileReader();
         reader.onload = () => {
-            setPreviewImage(reader.result);
+            setPreviewImage(reader.result as string);
             setIsSomethingChanged(true);
         };
 
@@ -69,9 +68,9 @@ const EditProfilePage = () => {
         }
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const formData = new FormData(e.target);
+        const formData = new FormData(e.target as HTMLFormElement);
 
         try {
             setIsLoading(true);
@@ -96,7 +95,7 @@ const EditProfilePage = () => {
             });
             setPreviewImage("");
             setIsSomethingChanged(false);
-        } catch (error) {
+        } catch (error: any) {
             console.log(error.response.data);
             setIsLoading(false);
             setIsSomethingChanged(false);
@@ -115,18 +114,14 @@ const EditProfilePage = () => {
         if (!token) {
             redirect("/login");
         }
-        setUsername(accountUser?.username);
-        setBio(accountUser?.bio);
+        setUsername(accountUser?.username || "");
+        setBio(accountUser?.bio || "");
     }, []);
 
     return (
         <div className="w-full text-gray-200 min-h-screen flex justify-center items-center">
-            <FormControl
-                w="50rem"
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                as="form"
+            <form
+                className="w-[50rem] flex flex-col items-center"
                 onSubmit={handleSubmit}
             >
                 <div className="flex flex-col lg:flex-row items-center">
@@ -355,7 +350,7 @@ const EditProfilePage = () => {
                 >
                     Save Changes
                 </Button>
-            </FormControl>
+            </form>
         </div>
     );
 };

@@ -15,17 +15,19 @@ import { BsSearch } from "react-icons/bs";
 import ProfileInfo from "@/src/components/profile/ProfileInfo";
 import NewLinkModal from "@/src/components/modal/NewLinkModal";
 import ErrorPage from "@/src/components/ErrorPage";
-import { useUserStore } from "../../../zustandStore/userStore";
 import { getRequest } from "@/src/api/fetcher";
-import LinkCard from "@/src/components/LinkCard";
+import LinkCard, { LinkType } from "@/src/components/LinkCard";
+import { useParams } from "next/navigation";
+import userStore from "@/src/zustandStore/userStore";
 
-const ProfilePage = ({ params }) => {
+const ProfilePage = () => {
+    const params = useParams().username;
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { accountUser, getAccountUser } = useUserStore();
+    const { accountUser, getAccountUser } = userStore();
 
     // user profile
     const { data, isLoading, error, mutate } = useSWR(
-        `/users/user/${params.username}`,
+        `/users/user/${params}`,
         getRequest
     );
 
@@ -78,7 +80,7 @@ const ProfilePage = ({ params }) => {
                     <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-8">
                         {isLoading ? "Loading Links..." : ""}
 
-                        {data?.links?.map((link) => (
+                        {data?.links?.map((link: LinkType) => (
                             <LinkCard
                                 link={link}
                                 key={link._id}

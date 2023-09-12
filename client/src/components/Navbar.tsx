@@ -13,12 +13,12 @@ import { BsFillPersonFill, BsGear } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
-import { useUserStore } from "../zustandStore/userStore";
 import { useEffect } from "react";
+import userStore from "../zustandStore/userStore";
 
 const Navbar = () => {
     const toast = useToast();
-    const { accountUser, getAccountUser, logoutUser } = useUserStore();
+    const { accountUser, getAccountUser, logoutUser } = userStore();
 
     const handleLogout = () => {
         logoutUser();
@@ -31,7 +31,6 @@ const Navbar = () => {
         });
     };
 
-    console.log(accountUser);
     useEffect(() => {
         getAccountUser();
     }, []);

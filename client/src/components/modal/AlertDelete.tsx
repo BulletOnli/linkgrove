@@ -12,13 +12,19 @@ import {
 } from "@chakra-ui/react";
 import { useRef, useState } from "react";
 
-const AlertDelete = ({ isOpen, onClose, id, mutate }) => {
+type AlertDeleteProps = {
+    isOpen: boolean;
+    onClose: () => void;
+    id: string;
+    mutate: () => void;
+};
+
+const AlertDelete = ({ isOpen, onClose, id, mutate }: AlertDeleteProps) => {
     const toast = useToast();
-    const cancelRef = useRef();
+    const cancelRef = useRef<HTMLButtonElement>(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async () => {
         try {
             setIsLoading(true);
             await deleteRequest(`/links/delete?id=${id}`);

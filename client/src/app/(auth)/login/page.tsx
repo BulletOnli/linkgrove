@@ -1,5 +1,5 @@
 "use client";
-import LoginForm from "../../components/form/LoginForm";
+import LoginForm from "@/src/components/form/LoginForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";

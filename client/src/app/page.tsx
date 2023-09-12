@@ -1,10 +1,10 @@
 "use client";
 import { Button, Image, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { useUserStore } from "../zustandStore/userStore";
+import userStore from "../zustandStore/userStore";
 
 const HomePage = () => {
-    const accountUser = useUserStore((state) => state.accountUser);
+    const accountUser = userStore((state) => state.accountUser);
     const token = localStorage.getItem("weblinksToken");
 
     return (

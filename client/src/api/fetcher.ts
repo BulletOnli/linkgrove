@@ -1,24 +1,24 @@
 import axios from "axios";
 
 const apiBaseUrl = axios.create({
-    baseURL: process.env.NEXT_PUBLIC_API_KEY,
+    baseURL: "http://localhost:8080",
 });
 
-export const loginUser = async (url, data) => {
+export const loginUser = async (url: string, data: any) => {
     const response = await apiBaseUrl.post(url, data);
     localStorage.setItem("weblinksToken", response?.data?.token);
 
     return response.data;
 };
 
-export const registerUser = async (url, data) => {
+export const registerUser = async (url: string, data: any) => {
     const response = await apiBaseUrl.post(url, data);
     localStorage.setItem("weblinksToken", response?.data?.token);
 
     return response.data;
 };
 
-export const getRequest = async (url) => {
+export const getRequest = async (url: string) => {
     const response = await apiBaseUrl.get(url, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("weblinksToken")}`,
@@ -28,7 +28,7 @@ export const getRequest = async (url) => {
     return response.data;
 };
 
-export const postRequest = async (url, data) => {
+export const postRequest = async (url: string, data: any) => {
     const response = await apiBaseUrl.post(url, data, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("weblinksToken")}`,
@@ -38,7 +38,7 @@ export const postRequest = async (url, data) => {
     return response.data;
 };
 
-export const putRequest = async (url, data) => {
+export const putRequest = async (url: string, data: any) => {
     const response = await apiBaseUrl.put(url, data, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("weblinksToken")}`,
@@ -48,7 +48,7 @@ export const putRequest = async (url, data) => {
     return response.data;
 };
 
-export const deleteRequest = async (url) => {
+export const deleteRequest = async (url: string) => {
     const response = await apiBaseUrl.delete(url, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem("weblinksToken")}`,
