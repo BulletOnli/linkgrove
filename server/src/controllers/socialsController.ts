@@ -1,7 +1,7 @@
-const asyncHandler = require("express-async-handler");
-const Socials = require("../models/socialsModel");
+import asyncHandler from "express-async-handler";
+import Socials from "../models/socialsModel";
 
-const getAllSocials = asyncHandler(async (req, res) => {
+export const getAllSocials = asyncHandler(async (req, res) => {
     const { creator } = req.query;
     try {
         const socialLinks = await Socials.findOne({ creator });
@@ -13,10 +13,10 @@ const getAllSocials = asyncHandler(async (req, res) => {
 });
 
 // create all social links
-const createSocials = asyncHandler(async (req, res) => {
+export const createSocials = asyncHandler(async (req, res) => {
     try {
         const newSocials = await Socials.create({
-            creator: req.user._id,
+            creator: req.user?._id,
         });
 
         res.status(200).json(newSocials);
@@ -26,7 +26,7 @@ const createSocials = asyncHandler(async (req, res) => {
     }
 });
 
-const updateSocials = asyncHandler(async (req, res) => {
+export const updateSocials = asyncHandler(async (req, res) => {
     const { id } = req.query;
     try {
         await Socials.findByIdAndUpdate(id, req.body);
@@ -37,5 +37,3 @@ const updateSocials = asyncHandler(async (req, res) => {
         throw new Error("Can't update the social link");
     }
 });
-
-module.exports = { getAllSocials, createSocials, updateSocials };

@@ -1,21 +1,29 @@
-const asyncHandler = require("express-async-handler");
-const Link = require("../models/linkModel");
-const { uploadImg, getImg, deleteImg } = require("./cloudinaryController");
+import { deleteImg, uploadImg } from "../utils/cloudinary";
+import asyncHandler from "express-async-handler";
+import Link from "../models/linkModel";
+import { Request, Response } from "express";
 
-const getLink = asyncHandler(async (req, res) => {
+export const getLink = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.params;
     const link = await Link.findById(id);
 
     res.status(200).json(link);
 });
 
-const createLink = asyncHandler(async (req, res) => {
+export const createLink = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) {
         res.status(404);
         throw new Error("Please log in");
     }
+
     const { title, url, github } = req.body;
-    const img = await uploadImg(req.file);
+
+    const img = await uploadImg(
+        req.file as {
+            path: string;
+            originalname: string;
+        }
+    );
 
     if (!img) {
         res.status(500);
@@ -33,31 +41,33 @@ const createLink = asyncHandler(async (req, res) => {
         thumbnail,
         github,
         likes: {},
-        creator: req.user.id,
+        creator: req.user?._id,
     });
 
     res.status(201).json(newLink);
 });
 
-const deleteLink = asyncHandler(async (req, res) => {
+export const deleteLink = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.query;
-    try {
-        const link = await Link.findById(id);
+
+    const link = await Link.findById(id);
+
+    if (link && link.thumbnail?.id) {
         // delete img in both cloudinary and local
-        await deleteImg(link?.thumbnail?._id);
+        await deleteImg(link?.thumbnail?.id);
         // delete link in the db
         await Link.findByIdAndDelete(id);
 
         res.status(200).json({
             message: "Link deleted!",
         });
-    } catch (error) {
+    } else {
         res.status(404);
-        throw new Error("Link not found!");
+        throw new Error("Link not found");
     }
 });
 
-const updateLink = asyncHandler(async (req, res) => {
+export const updateLink = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.query;
     const { title, url, github } = req.body;
 
@@ -73,7 +83,7 @@ const updateLink = asyncHandler(async (req, res) => {
         link.url = url;
         link.github = github;
 
-        if (req.file) {
+        if (req.file && link.thumbnail?.id) {
             const img = await uploadImg(req.file);
             // delete previous img
             await deleteImg(link?.thumbnail?.id);
@@ -96,12 +106,13 @@ const updateLink = asyncHandler(async (req, res) => {
     }
 });
 
-const toggleLike = asyncHandler(async (req, res) => {
+export const toggleLike = asyncHandler(async (req: Request, res: Response) => {
     const { linkId } = req.query;
     const { userId } = req.body;
 
-    try {
-        const link = await Link.findById(linkId);
+    const link = await Link.findById(linkId);
+
+    if (link && link?.likes) {
         const isLiked = link.likes.get(userId);
 
         if (isLiked) {
@@ -119,10 +130,8 @@ const toggleLike = asyncHandler(async (req, res) => {
         );
 
         res.status(200).json(updatedLink);
-    } catch (error) {
+    } else {
         res.status(404);
-        throw new Error("Cant like the link");
+        throw new Error("Link not found");
     }
 });
-
-module.exports = { getLink, createLink, deleteLink, updateLink, toggleLike };

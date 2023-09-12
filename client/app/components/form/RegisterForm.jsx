@@ -32,7 +32,7 @@ const RegisterForm = () => {
 
         try {
             setIsLoading(true);
-            await registerUser("/users/register", registerDetails);
+            await registerUser("/auth/register", registerDetails);
             setIsLoading(false);
             toast({
                 title: "Account Created!",

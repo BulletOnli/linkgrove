@@ -1,26 +1,22 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const multer = require("multer");
-const { registerUser, loginUser } = require("../controllers/authController");
-const {
-    getUserProfile,
+import multer from "multer";
+import checkAuth from "../middleware/authMiddleware";
+import {
     getAccountDetails,
+    getUserProfile,
     updateAccountDetails,
-} = require("../controllers/userController");
-const checkAuth = require("../middleware/authMiddleware");
+} from "../controllers/userController";
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "./uploads/profilePics");
+        cb(null, "./src/uploads/profilePics");
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
     },
 });
 const upload = multer({ storage });
-
-router.post("/register", registerUser);
-router.post("/login", loginUser);
 
 router.get("/user/:username", checkAuth, getUserProfile); // for specific user
 
@@ -32,4 +28,4 @@ router.put(
     updateAccountDetails
 );
 
-module.exports = router;
+export default router;

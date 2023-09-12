@@ -26,7 +26,7 @@ const LoginForm = () => {
         e.preventDefault();
         try {
             setIsLoading(true);
-            await loginUser("/users/login", { username, password });
+            await loginUser("/auth/login", { username, password });
             setIsLoading(false);
             toast({
                 title: "Login Success!",

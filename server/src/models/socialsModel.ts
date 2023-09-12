@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const socialsSchema = new mongoose.Schema({
     facebook: {
@@ -35,4 +35,6 @@ const socialsSchema = new mongoose.Schema({
     },
 });
 
-module.exports = mongoose.model("Socials", socialsSchema);
+export type SocialsSchemaType = mongoose.InferSchemaType<typeof socialsSchema>;
+
+export default mongoose.model<SocialsSchemaType>("Socials", socialsSchema);

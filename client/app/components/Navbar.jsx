@@ -31,6 +31,7 @@ const Navbar = () => {
         });
     };
 
+    console.log(accountUser);
     useEffect(() => {
         getAccountUser();
     }, []);
@@ -44,7 +45,7 @@ const Navbar = () => {
                 LinkGrove
             </Link>
 
-            {Object.keys(accountUser).length > 0 ? (
+            {accountUser ? (
                 <Menu>
                     <MenuButton
                         as={Button}

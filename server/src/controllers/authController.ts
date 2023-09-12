@@ -1,16 +1,10 @@
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcrypt");
-const User = require("../models/userModel");
-const jwt = require("jsonwebtoken");
-const Socials = require("../models/socialsModel");
+import asyncHandler from "express-async-handler";
+import bcrypt from "bcrypt";
+import User from "../models/userModel";
+import Socials from "../models/socialsModel";
+import { generateToken } from "../utils/jwtToken";
 
-const generateToken = (_id) => {
-    return jwt.sign({ _id }, process.env.JWT_SECRET, {
-        expiresIn: "1d",
-    });
-};
-
-const registerUser = asyncHandler(async (req, res) => {
+export const registerUser = asyncHandler(async (req, res) => {
     const { username, password, confirmPassword } = req.body;
     const user = await User.findOne({ username });
 
@@ -49,11 +43,11 @@ const registerUser = asyncHandler(async (req, res) => {
 
     res.status(201).json({
         user: userDetails,
-        token: generateToken(newUser._id),
+        token: generateToken(newUser._id.toString()),
     });
 });
 
-const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username });
     if (!user) {
@@ -69,12 +63,10 @@ const loginUser = asyncHandler(async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
         res.status(200).json({
             user: userDetails,
-            token: generateToken(user._id),
+            token: generateToken(user._id.toString()),
         });
     } else {
         res.status(404);
         throw new Error("Incorrect email or password");
     }
 });
-
-module.exports = { registerUser, loginUser };

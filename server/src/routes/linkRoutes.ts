@@ -1,18 +1,18 @@
-const express = require("express");
-const router = express.Router();
-const multer = require("multer");
-const {
+import express from "express";
+import multer from "multer";
+import {
     createLink,
     deleteLink,
-    updateLink,
     getLink,
     toggleLike,
-} = require("../controllers/linkController");
-const checkAuth = require("../middleware/authMiddleware");
+    updateLink,
+} from "../controllers/linkController";
+import checkAuth from "../middleware/authMiddleware";
+const router = express.Router();
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, "./uploads");
+        cb(null, "./src/uploads");
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -29,4 +29,4 @@ router.delete("/delete", deleteLink);
 
 router.put("/like", toggleLike);
 
-module.exports = router;
+export default router;
