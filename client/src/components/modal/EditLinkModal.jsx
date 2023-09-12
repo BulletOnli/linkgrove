@@ -19,7 +19,7 @@ import {
 import { useState } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { putRequest } from "@/app/api/fetcher";
+import { putRequest } from "@/src/api/fetcher";
 
 const EditLinkModal = ({ link, isOpen, onClose, mutate }) => {
     const toast = useToast();

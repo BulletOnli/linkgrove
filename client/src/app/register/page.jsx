@@ -1,20 +1,11 @@
 "use client";
-import LoginForm from "../components/form/LoginForm";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { useEffect } from "react";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
+import RegisterForm from "../../components/form/RegisterForm";
 
-const LoginPage = () => {
-    useEffect(() => {
-        const token = localStorage.getItem("weblinksToken");
-        if (token) {
-            redirect("/");
-        }
-    }, []);
-
+const RegisterPage = () => {
     return (
         <div className="relative w-full flex flex-col justify-center items-center">
             <div className="absolute top-0 w-full lg:w-[70vw] flex items-center justify-between p-6">
@@ -24,10 +15,11 @@ const LoginPage = () => {
                 >
                     LinkGrove
                 </Link>
+                <div></div>
             </div>
 
             <div className="w-full h-screen flex justify-center items-center">
-                <LoginForm />
+                <RegisterForm />
             </div>
 
             <footer className="w-full lg:w-[70vw] flex p-6">
@@ -61,4 +53,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default RegisterPage;

@@ -11,7 +11,7 @@ import Link from "next/link";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/app/api/fetcher";
+import { registerUser } from "@/src/api/fetcher";
 
 const RegisterForm = () => {
     const router = useRouter();

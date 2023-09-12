@@ -23,7 +23,7 @@ import {
 import { useState } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { postRequest } from "@/app/api/fetcher";
+import { postRequest } from "@/src/api/fetcher";
 
 const NewLinkModal = ({ isOpen, onClose, mutate }) => {
     const toast = useToast();

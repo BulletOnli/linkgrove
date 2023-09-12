@@ -1,8 +1,8 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { ChakraProvider } from "@chakra-ui/react";
-import Navbar from "./components/Navbar";
 import NextTopLoader from "nextjs-toploader";
+import Navbar from "../components/Navbar";
 
 const App = ({ children }) => {
     const pathname = usePathname();

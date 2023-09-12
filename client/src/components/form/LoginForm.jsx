@@ -13,7 +13,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
-import { loginUser } from "@/app/api/fetcher";
+import { loginUser } from "@/src/api/fetcher";
 
 const LoginForm = () => {
     const toast = useToast();

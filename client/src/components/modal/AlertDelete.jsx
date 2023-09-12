@@ -1,5 +1,5 @@
 "use client";
-import { deleteRequest } from "@/app/api/fetcher";
+import { deleteRequest } from "@/src/api/fetcher";
 import {
     AlertDialog,
     AlertDialogBody,

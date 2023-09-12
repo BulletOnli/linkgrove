@@ -12,12 +12,12 @@ import {
 } from "@chakra-ui/react";
 import useSWR from "swr";
 import { BsSearch } from "react-icons/bs";
-import ProfileInfo from "../../components/profile/ProfileInfo";
-import NewLinkModal from "../../components/modal/NewLinkModal";
-import ErrorPage from "../../components/ErrorPage";
-import LinkCard from "../../components/LinkCard";
-import { useUserStore } from "../../zustandStore/userStore";
-import { getRequest } from "@/app/api/fetcher";
+import ProfileInfo from "@/src/components/profile/ProfileInfo";
+import NewLinkModal from "@/src/components/modal/NewLinkModal";
+import ErrorPage from "@/src/components/ErrorPage";
+import { useUserStore } from "../../../zustandStore/userStore";
+import { getRequest } from "@/src/api/fetcher";
+import LinkCard from "@/src/components/LinkCard";
 
 const ProfilePage = ({ params }) => {
     const { isOpen, onOpen, onClose } = useDisclosure();

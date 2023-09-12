@@ -1,7 +1,7 @@
 "use client";
 import { Button, Image, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { useUserStore } from "./zustandStore/userStore";
+import { useUserStore } from "../zustandStore/userStore";
 
 const HomePage = () => {
     const accountUser = useUserStore((state) => state.accountUser);

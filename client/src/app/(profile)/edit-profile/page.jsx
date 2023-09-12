@@ -24,8 +24,8 @@ import {
     FaReddit,
     FaYoutube,
 } from "react-icons/fa";
-import { useUserStore } from "@/app/zustandStore/userStore";
-import { getRequest, putRequest } from "@/app/api/fetcher";
+import { useUserStore } from "@/src/zustandStore/userStore";
+import { getRequest, putRequest } from "@/src/api/fetcher";
 import useSWR, { mutate } from "swr";
 import { redirect } from "next/navigation";
 
