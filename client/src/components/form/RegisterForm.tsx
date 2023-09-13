@@ -1,6 +1,5 @@
 "use client";
 import {
-    FormControl,
     Input,
     InputGroup,
     InputLeftElement,
@@ -9,21 +8,22 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
-import { useState, FormEvent, ChangeEvent } from "react";
+import { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { registerUser } from "@/src/api/fetcher";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
-type RegisterInfo = {
+type RegisterInfoType = {
     username: string;
+    password: string;
+    confirmPassword: string;
 };
 
 const RegisterForm = () => {
     const router = useRouter();
     const toast = useToast();
-    const [registerDetails, setRegisterDetails] = useState<RegisterInfo | null>(
-        null
-    );
-    const [isLoading, setIsLoading] = useState(false);
+    const [registerDetails, setRegisterDetails] =
+        useState<RegisterInfoType | null>(null);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -33,13 +33,24 @@ const RegisterForm = () => {
         }));
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+    const registerMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.post(
+                "http://localhost:8080/auth/register",
+                registerDetails,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-        try {
-            setIsLoading(true);
-            await registerUser("/auth/register", registerDetails);
-            setIsLoading(false);
+            return response.data;
+        },
+        onSuccess: (data) => {
+            localStorage.setItem("weblinksToken", data.token);
             toast({
                 title: "Account Created!",
                 status: "success",
@@ -48,23 +59,26 @@ const RegisterForm = () => {
                 duration: 3000,
             });
             router.push(`/${registerDetails?.username}`);
-        } catch (error: any) {
-            console.log(error);
-            setIsLoading(false);
+        },
+        onError: (error: any) =>
             toast({
                 title: `Oops! ${error.response.data.error.message}`,
                 status: "error",
                 isClosable: true,
                 position: "top",
                 duration: 2000,
-            });
-        }
-    };
+            }),
+    });
 
     return (
         <div className="w-[28rem]  bg-[#23232E] flex flex-col items-center p-4 lg:p-8 rounded-xl m-4">
             <h1 className="text-4xl font-bold mb-6">Register</h1>
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    registerMutation.mutate();
+                }}
+            >
                 <InputGroup mb={2}>
                     <InputLeftElement pointerEvents="none">
                         <BsFillPersonFill color="gray.300" />
@@ -95,7 +109,6 @@ const RegisterForm = () => {
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
-                        //
                         onChange={handleChange}
                         required
                     />
@@ -121,7 +134,7 @@ const RegisterForm = () => {
                     type="submit"
                     colorScheme="teal"
                     mt={3}
-                    isLoading={isLoading}
+                    isLoading={registerMutation.isLoading}
                     spinnerPlacement="start"
                 >
                     Register

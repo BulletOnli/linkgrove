@@ -19,17 +19,29 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
 import { postRequest } from "@/src/api/fetcher";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import userStore, { UserType } from "@/src/zustandStore/userStore";
+import { useForm } from "react-hook-form";
+
+type NewLinkType = {
+    title: string;
+    url: string;
+    github: string;
+    thumbnail: File;
+};
 
 type NewLinkModalProps = {
     isOpen: boolean;
     onClose: () => void;
-    mutate: () => void;
+    accountUser: UserType | null;
 };
 
-const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
+const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
     const toast = useToast();
+    const queryClient = useQueryClient();
     const [previewImage, setPreviewImage] = useState<ArrayBuffer | string>("");
-    const [isLoading, setIsLoading] = useState(false);
+    const { register, handleSubmit, setValue } = useForm<NewLinkType>();
 
     const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target?.files?.[0];
@@ -40,17 +52,33 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
 
         if (file) {
             reader.readAsDataURL(file);
+            setValue("thumbnail", file);
         }
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const data = new FormData(e.target as HTMLFormElement);
-        try {
-            setIsLoading(true);
-            await postRequest("/links/create", data);
-            mutate();
-            setIsLoading(false);
+    const newLinkMutation = useMutation({
+        mutationFn: async (data: FormData) => {
+            const response = await axios.post(
+                "http://localhost:8080/links/create",
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
+
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries([
+                "user",
+                "profile",
+                accountUser?.username,
+            ]);
+
             toast({
                 title: "New link created!",
                 status: "success",
@@ -60,8 +88,8 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
             });
             onClose();
             setPreviewImage("");
-        } catch (error) {
-            setIsLoading(false);
+        },
+        onError: () => {
             toast({
                 title: "Oops! Something went wrong.",
                 status: "error",
@@ -69,8 +97,8 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                 position: "top",
                 duration: 2000,
             });
-        }
-    };
+        },
+    });
 
     return (
         <Modal
@@ -80,7 +108,17 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                 setPreviewImage("");
             }}
         >
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={handleSubmit((data) => {
+                    const formData = new FormData();
+                    formData.set("title", data.title);
+                    formData.set("url", data.url);
+                    formData.set("github", data.github);
+                    formData.set("thumbnail", data.thumbnail);
+
+                    newLinkMutation.mutate(formData);
+                })}
+            >
                 <ModalOverlay />
                 <ModalContent color="white" bg="#23232E" m={4}>
                     <ModalHeader>Create new link</ModalHeader>
@@ -122,13 +160,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                                 <Input
                                     type="text"
                                     placeholder="Title"
-                                    name="title"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
-                                    required
+                                    {...register("title", { required: true })}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -138,13 +175,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                                 <Input
                                     type="url"
                                     placeholder="Url"
-                                    name="url"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
-                                    required
+                                    {...register("url", { required: true })}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -154,12 +190,12 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                                 <Input
                                     type="url"
                                     placeholder="Repository (Optional)"
-                                    name="github"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
+                                    {...register("github")}
                                 />
                             </InputGroup>
                         </VStack>
@@ -170,7 +206,7 @@ const NewLinkModal = ({ isOpen, onClose, mutate }: NewLinkModalProps) => {
                             isDisabled={!previewImage}
                             type="submit"
                             colorScheme="teal"
-                            isLoading={isLoading}
+                            isLoading={newLinkMutation.isLoading}
                             spinnerPlacement="start"
                         >
                             Create

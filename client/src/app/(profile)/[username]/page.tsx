@@ -10,30 +10,45 @@ import {
     useDisclosure,
     Image,
 } from "@chakra-ui/react";
-import useSWR from "swr";
 import { BsSearch } from "react-icons/bs";
 import ProfileInfo from "@/src/components/profile/ProfileInfo";
 import NewLinkModal from "@/src/components/modal/NewLinkModal";
 import ErrorPage from "@/src/components/ErrorPage";
-import { getRequest } from "@/src/api/fetcher";
 import LinkCard, { LinkType } from "@/src/components/LinkCard";
 import { useParams } from "next/navigation";
 import userStore from "@/src/zustandStore/userStore";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const ProfilePage = () => {
     const params = useParams().username;
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const { accountUser, getAccountUser } = userStore();
+    const accountUser = userStore((state) => state.accountUser);
 
-    // user profile
-    const { data, isLoading, error, mutate } = useSWR(
-        `/users/user/${params}`,
-        getRequest
-    );
+    console.log(accountUser);
 
-    const isOtherProfile = accountUser?.username !== data?.user?.username;
+    const userProfileQuery = useQuery({
+        queryKey: ["user", "profile", params],
+        queryFn: async () => {
+            const response = await axios.get(
+                `http://localhost:8080/users/user/${params}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-    if (error) return <ErrorPage />;
+            return response.data;
+        },
+    });
+
+    const isOtherProfile =
+        accountUser?.username !== userProfileQuery.data?.user?.username;
+
+    if (userProfileQuery.error) return <ErrorPage />;
 
     return (
         <div className="w-full min-h-screen flex flex-col items-center">
@@ -47,10 +62,10 @@ const ProfilePage = () => {
             />
             <div className="relative w-full h-full flex flex-col items-center lg:flex-row lg:items-start p-4 gap-4 lg:gap-0">
                 <ProfileInfo
-                    userData={data?.user}
+                    userData={userProfileQuery.data?.user}
                     isOtherProfile={isOtherProfile}
                     params={params}
-                    socials={data?.socials}
+                    socials={userProfileQuery.data?.socials}
                 />
 
                 <div className="w-full flex flex-col p-4">
@@ -78,25 +93,29 @@ const ProfilePage = () => {
                     </HStack>
 
                     <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-8">
-                        {isLoading ? "Loading Links..." : ""}
+                        {userProfileQuery.isLoading ? "Loading Links..." : ""}
 
-                        {data?.links?.map((link: LinkType) => (
+                        {userProfileQuery.data?.links?.map((link: LinkType) => (
                             <LinkCard
                                 link={link}
                                 key={link._id}
                                 isOtherProfile={isOtherProfile}
-                                mutate={mutate}
+                                params={params}
                             />
                         ))}
 
-                        {data?.links?.length <= 0
+                        {userProfileQuery.data?.links?.length <= 0
                             ? "User doesn't have any links yet"
                             : ""}
                     </div>
                 </div>
             </div>
 
-            <NewLinkModal isOpen={isOpen} onClose={onClose} mutate={mutate} />
+            <NewLinkModal
+                isOpen={isOpen}
+                onClose={onClose}
+                accountUser={accountUser}
+            />
         </div>
     );
 };

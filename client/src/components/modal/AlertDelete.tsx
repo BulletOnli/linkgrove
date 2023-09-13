@@ -1,5 +1,4 @@
 "use client";
-import { deleteRequest } from "@/src/api/fetcher";
 import {
     AlertDialog,
     AlertDialogBody,
@@ -10,26 +9,49 @@ import {
     Button,
     useToast,
 } from "@chakra-ui/react";
-import { useRef, useState } from "react";
+import { useRef } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import { UserType } from "@/src/zustandStore/userStore";
 
 type AlertDeleteProps = {
     isOpen: boolean;
     onClose: () => void;
     id: string;
-    mutate: () => void;
+    accountUser: UserType | null;
 };
 
-const AlertDelete = ({ isOpen, onClose, id, mutate }: AlertDeleteProps) => {
+const AlertDelete = ({
+    isOpen,
+    onClose,
+    id,
+    accountUser,
+}: AlertDeleteProps) => {
+    const queryClient = useQueryClient();
     const toast = useToast();
     const cancelRef = useRef<HTMLButtonElement>(null);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async () => {
-        try {
-            setIsLoading(true);
-            await deleteRequest(`/links/delete?id=${id}`);
-            mutate();
-            setIsLoading(false);
+    const deleteLinkMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.delete(
+                `http://localhost:8080/links/delete?id=${id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
+
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries([
+                "user",
+                "profile",
+                accountUser?.username,
+            ]);
             toast({
                 title: "Link Deleted!",
                 status: "success",
@@ -38,9 +60,8 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }: AlertDeleteProps) => {
                 duration: 3000,
             });
             onClose();
-        } catch (error) {
-            setIsLoading(false);
-            console.log(error);
+        },
+        onError: () => {
             toast({
                 title: "Oops! Something went wrong.",
                 status: "error",
@@ -48,8 +69,8 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }: AlertDeleteProps) => {
                 position: "top",
                 duration: 2000,
             });
-        }
-    };
+        },
+    });
 
     return (
         <AlertDialog
@@ -72,9 +93,9 @@ const AlertDelete = ({ isOpen, onClose, id, mutate }: AlertDeleteProps) => {
                         <Button
                             colorScheme="red"
                             ml={3}
-                            isLoading={isLoading}
+                            isLoading={deleteLinkMutation.isLoading}
                             spinnerPlacement="start"
-                            onClick={handleSubmit}
+                            onClick={() => deleteLinkMutation.mutate()}
                         >
                             Delete
                         </Button>

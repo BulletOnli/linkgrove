@@ -24,7 +24,6 @@ const userStore = create<UserStoreType>((set, get) => ({
     accountUser: null,
     getAccountUser: async () => {
         const accountUser = await getRequest("/users/details");
-        console.log(accountUser);
         // automatically remove the token when it expires
         if (!accountUser) {
             localStorage.removeItem("weblinksToken");

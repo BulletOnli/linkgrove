@@ -1,7 +1,6 @@
 import {
     Image,
     HStack,
-    Spacer,
     Text,
     Flex,
     IconButton,
@@ -9,15 +8,16 @@ import {
     useDisclosure,
 } from "@chakra-ui/react";
 import Link from "next/link";
-import { AiFillHeart, AiOutlineHeart, AiOutlineLink } from "react-icons/ai";
+import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
 import { BsGithub } from "react-icons/bs";
-import { FiExternalLink, FiEdit } from "react-icons/fi";
+import { FiEdit } from "react-icons/fi";
 import { FaTrash } from "react-icons/fa";
 import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
-import { putRequest } from "../api/fetcher";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import userStore from "../zustandStore/userStore";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 export type LinkType = {
     creator: string;
@@ -35,29 +35,50 @@ export type LinkType = {
 type LinkCardProps = {
     isOtherProfile: boolean;
     link: LinkType;
-    mutate: () => void;
+    params: string;
 };
 
 const LinkCard = (props: LinkCardProps) => {
+    const queryClient = useQueryClient();
     const router = useRouter();
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
+    const accountUser = userStore((state) => state.accountUser);
+
     const { title, url, thumbnail, likes, github, _id } = props.link;
     const isOtherProfile = props.isOtherProfile;
-
-    const { accountUser } = userStore();
 
     const isLiked = Object.keys(likes).find((id) => id === accountUser?._id);
     const likeCount = !likes ? 0 : Object.keys(likes).length;
     const userId = accountUser?._id;
 
-    const toggleLike = async () => {
-        if (!localStorage.getItem("weblinksToken")) {
-            return router.push("/login");
-        }
+    const toggleLikeMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.put(
+                `http://localhost:8080/links/like?linkId=${_id}`,
+                { userId },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-        await putRequest(`/links/like?linkId=${_id}`, { userId });
-        props.mutate();
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries(["user", "profile", props.params]);
+        },
+    });
+
+    const handleToggle = () => {
+        if (!localStorage.getItem("weblinksToken")) {
+            router.push("/login");
+        } else {
+            toggleLikeMutation.mutate();
+        }
     };
 
     return (
@@ -128,12 +149,12 @@ const LinkCard = (props: LinkCardProps) => {
                                 {isLiked ? (
                                     <AiFillHeart
                                         className="text-xl cursor-pointer text-red-700"
-                                        onClick={toggleLike}
+                                        onClick={handleToggle}
                                     />
                                 ) : (
                                     <AiOutlineHeart
                                         className="text-xl cursor-pointer "
-                                        onClick={toggleLike}
+                                        onClick={handleToggle}
                                     />
                                 )}
                                 <Text fontSize="sm">{likeCount}</Text>
@@ -147,13 +168,13 @@ const LinkCard = (props: LinkCardProps) => {
                 isOpen={deleteModal.isOpen}
                 onClose={deleteModal.onClose}
                 id={_id}
-                mutate={props.mutate}
+                accountUser={accountUser}
             />
             <EditLinkModal
                 link={props.link}
                 isOpen={editModal.isOpen}
                 onClose={editModal.onClose}
-                mutate={props.mutate}
+                accountUser={accountUser}
             />
         </>
     );

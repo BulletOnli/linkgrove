@@ -1,33 +1,42 @@
 "use client";
 import {
-    FormControl,
     Input,
     InputGroup,
     InputLeftElement,
     Button,
     useToast,
-    FormHelperText,
-    FormErrorMessage,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, FormEvent } from "react";
+import { useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
-import { loginUser } from "@/src/api/fetcher";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const LoginForm = () => {
     const toast = useToast();
     const router = useRouter();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        try {
-            setIsLoading(true);
-            await loginUser("/auth/login", { username, password });
-            setIsLoading(false);
+    const loginMutation = useMutation({
+        mutationFn: async () => {
+            const response = await axios.post(
+                "http://localhost:8080/auth/login",
+                { username, password },
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
+
+            return response.data;
+        },
+        onSuccess: (data) => {
+            localStorage.setItem("weblinksToken", data.token);
             toast({
                 title: "Login Success!",
                 status: "success",
@@ -36,8 +45,8 @@ const LoginForm = () => {
                 duration: 3000,
             });
             router.push(`/${username}`);
-        } catch (error: any) {
-            setIsLoading(false);
+        },
+        onError: (error: any) => {
             toast({
                 title: `Oops! ${error.response.data.error.message}.`,
                 status: "error",
@@ -45,13 +54,18 @@ const LoginForm = () => {
                 position: "top",
                 duration: 2000,
             });
-        }
-    };
+        },
+    });
 
     return (
         <div className="w-[28rem] bg-[#23232E] flex flex-col items-center p-4 lg:p-8 rounded-xl m-4">
             <h1 className="text-4xl font-bold mb-6">Login</h1>
-            <form onSubmit={handleSubmit}>
+            <form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    loginMutation.mutate();
+                }}
+            >
                 <InputGroup mb={2}>
                     <InputLeftElement pointerEvents="none">
                         <BsFillPersonFill color="gray.300" />
@@ -94,7 +108,7 @@ const LoginForm = () => {
                     w="full"
                     colorScheme="teal"
                     mt={3}
-                    isLoading={isLoading}
+                    isLoading={loginMutation.isLoading}
                     spinnerPlacement="start"
                 >
                     Login

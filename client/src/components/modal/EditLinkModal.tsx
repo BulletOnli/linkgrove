@@ -21,52 +21,71 @@ import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
 import { putRequest } from "@/src/api/fetcher";
 import { LinkType } from "../LinkCard";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import userStore, { UserType } from "@/src/zustandStore/userStore";
+
+type EditLinkType = {
+    title: string;
+    url: string;
+    github: string;
+    thumbnail: File;
+};
 
 type EditLinkModalProps = {
     link: LinkType;
     isOpen: boolean;
     onClose: () => void;
-    mutate: () => void;
+    accountUser: UserType | null;
 };
 
 const EditLinkModal = ({
     link,
     isOpen,
     onClose,
-    mutate,
+    accountUser,
 }: EditLinkModalProps) => {
+    const queryClient = useQueryClient();
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState<ArrayBuffer | string>("");
-    const [isLoadingChanges, setIsLoadingChanges] = useState(false);
-    const [isSomethingChanged, setIsSomethingChanged] = useState(false);
-
-    // Set default value of inputs
-    const [title, setTitle] = useState(link?.title);
-    const [url, setUrl] = useState(link?.url);
-    const [github, setGithub] = useState(link?.github);
+    const { register, setValue, handleSubmit } = useForm<EditLinkType>();
 
     const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target?.files?.[0];
         const reader = new FileReader();
         reader.onload = () => {
             setPreviewImage(reader.result as string);
-            setIsSomethingChanged(true);
         };
 
         if (file) {
             reader.readAsDataURL(file);
+            setValue("thumbnail", file);
         }
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.target as HTMLFormElement);
+    const newLinkMutation = useMutation({
+        mutationFn: async (data: FormData) => {
+            const response = await axios.put(
+                `http://localhost:8080/links/update?id=${link?._id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-        try {
-            setIsLoadingChanges(true);
-            await putRequest(`/links/update?id=${link?._id}`, formData);
-            mutate();
-            setIsLoadingChanges(false);
+            return response.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries([
+                "user",
+                "profile",
+                accountUser?.username,
+            ]);
 
             toast({
                 title: "Link Updated",
@@ -76,33 +95,39 @@ const EditLinkModal = ({
                 duration: 3000,
             });
             onClose();
-            setPreviewImage("");
-            setIsSomethingChanged(false);
-        } catch (error: any) {
-            console.log(error);
-            setIsLoadingChanges(false);
+        },
+        onError: () => {
             toast({
-                title: `Oops! ${error.response.data.error.message}`,
+                title: "Oops! Something went wrong.",
                 status: "error",
                 isClosable: true,
                 position: "top",
                 duration: 2000,
             });
-        }
-    };
+        },
+    });
 
-    const handleClose = () => {
+    const handleModalClose = () => {
         setPreviewImage("");
-        setTitle(link?.title);
-        setUrl(link?.url);
-        setGithub(link?.github);
-        setIsSomethingChanged(false);
+        setValue("github", link.github);
+        setValue("title", link.title);
+        setValue("url", link.url);
         onClose();
     };
 
     return (
-        <Modal isOpen={isOpen} onClose={handleClose}>
-            <form onSubmit={handleSubmit}>
+        <Modal isOpen={isOpen} onClose={handleModalClose}>
+            <form
+                onSubmit={handleSubmit((data) => {
+                    const formData = new FormData();
+                    formData.set("title", data.title);
+                    formData.set("url", data.url);
+                    formData.set("github", data.github);
+                    formData.set("thumbnail", data.thumbnail);
+
+                    newLinkMutation.mutate(formData);
+                })}
+            >
                 <ModalOverlay />
                 <ModalContent color="white" bg="#23232E" m={4}>
                     <ModalHeader>Edit Link</ModalHeader>
@@ -146,17 +171,13 @@ const EditLinkModal = ({
                                 <Input
                                     type="text"
                                     placeholder="Title"
-                                    name="title"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
-                                    value={title}
-                                    onChange={(e) => {
-                                        setTitle(e.target.value);
-                                        setIsSomethingChanged(true);
-                                    }}
+                                    {...register("title")}
+                                    defaultValue={link.title}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -166,17 +187,13 @@ const EditLinkModal = ({
                                 <Input
                                     type="url"
                                     placeholder="Url"
-                                    name="url"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
-                                    value={url}
-                                    onChange={(e) => {
-                                        setUrl(e.target.value);
-                                        setIsSomethingChanged(true);
-                                    }}
+                                    {...register("url")}
+                                    defaultValue={link.url}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -186,31 +203,27 @@ const EditLinkModal = ({
                                 <Input
                                     type="url"
                                     placeholder="Repository (optional)"
-                                    name="github"
                                     variant="filled"
                                     bg="gray.700"
                                     _focus={{ bg: "gray.700" }}
                                     border="none"
                                     autoComplete="off"
-                                    value={github}
-                                    onChange={(e) => {
-                                        setGithub(e.target.value);
-                                        setIsSomethingChanged(true);
-                                    }}
+                                    {...register("github")}
+                                    defaultValue={link.github}
                                 />
                             </InputGroup>
                         </VStack>
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button mr={2} onClick={handleClose}>
+                        <Button mr={2} onClick={handleModalClose}>
                             Cancel
                         </Button>
                         <Button
-                            isDisabled={!isSomethingChanged}
+                            // isDisabled={!isSomethingChanged}
                             type="submit"
                             colorScheme="teal"
-                            isLoading={isLoadingChanges}
+                            isLoading={newLinkMutation.isLoading}
                             spinnerPlacement="start"
                         >
                             Save Changes

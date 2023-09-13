@@ -17,9 +17,6 @@ const ProfileInfo = ({
     isOtherProfile,
     socials,
 }: ProfileInfoProps) => {
-    console.log(userData);
-    console.log(socials);
-
     let username = params;
     if (username.includes("%20")) {
         username = params.replace(/%20/g, " ");
