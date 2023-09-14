@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 import { UserType } from "src/models/userModel";
 
-type User = {
+interface User extends UserType {
     _id: mongoose.Types.ObjectId;
-} & UserType;
+}
 
 declare global {
     namespace Express {

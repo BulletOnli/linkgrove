@@ -9,7 +9,7 @@ import {
     FormLabel,
     useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { BsFillCameraFill } from "react-icons/bs";
 import {
     FaTiktok,
@@ -22,70 +22,79 @@ import {
     FaReddit,
     FaYoutube,
 } from "react-icons/fa";
-import { getRequest, putRequest } from "@/src/api/fetcher";
-import useSWR, { mutate } from "swr";
 import { redirect } from "next/navigation";
 import userStore from "@/src/zustandStore/userStore";
 import { SocialsType } from "@/src/components/profile/SocialsGrid";
+import { useForm } from "react-hook-form";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import axios from "axios";
+
+interface EditProfileTypes extends SocialsType {
+    username: string;
+    bio: string;
+    profilePic: File;
+}
 
 const EditProfilePage = () => {
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState("");
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSomethingChanged, setIsSomethingChanged] = useState(false);
+    const { register, handleSubmit, setValue } = useForm<EditProfileTypes>();
 
-    const { accountUser, getAccountUser } = userStore();
+    const accountUser = userStore((state) => state.accountUser);
+    const getAccountUser = userStore((state) => state.getAccountUser);
 
-    const profileDetails = useSWR(
-        `/users/user/${accountUser?.username}`,
-        getRequest
-    );
+    const profileDetailsQuery = useQuery({
+        queryKey: ["user", "profile", "details", accountUser?._id],
+        queryFn: async () => {
+            const response = await axios.get(
+                `http://localhost:8080/users/user/${accountUser?.username}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-    const [username, setUsername] = useState("");
-    const [bio, setBio] = useState("");
-    const [socialInputs, setSocialInputs] = useState(
-        profileDetails?.data?.socials
-    );
+            return response.data;
+        },
+        enabled: accountUser != null,
+    });
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setSocialInputs((state: SocialsType) => ({
-            ...state,
-            [name]: value,
-        }));
-    };
+    const profileSocials: SocialsType = profileDetailsQuery.data?.socials;
 
     const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target?.files?.[0];
         const reader = new FileReader();
         reader.onload = () => {
             setPreviewImage(reader.result as string);
-            setIsSomethingChanged(true);
         };
 
         if (file) {
             reader.readAsDataURL(file);
+            setValue("profilePic", file);
         }
     };
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        const formData = new FormData(e.target as HTMLFormElement);
+    const editProfileMutation = useMutation({
+        mutationFn: async (data: FormData) => {
+            const response = await axios.put(
+                `http://localhost:8080/users/details/update?socialsId=${profileSocials?._id}`,
+                data,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
 
-        try {
-            setIsLoading(true);
-            await putRequest("/users/details/update", formData);
-
-            if (socialInputs) {
-                await putRequest(
-                    `/socials/update?id=${profileDetails?.data?.socials?._id}`,
-                    socialInputs
-                );
-                profileDetails.mutate();
-            }
+            return response.data;
+        },
+        onSuccess: () => {
             getAccountUser(); // update the state of accountUser
-
-            setIsLoading(false);
             toast({
                 title: "Details Updated",
                 status: "success",
@@ -93,12 +102,11 @@ const EditProfilePage = () => {
                 position: "bottom-left",
                 duration: 3000,
             });
-            setPreviewImage("");
-            setIsSomethingChanged(false);
-        } catch (error: any) {
-            console.log(error.response.data);
-            setIsLoading(false);
-            setIsSomethingChanged(false);
+            // setPreviewImage("");
+        },
+        onError: (err: any) => {
+            console.log(err);
+
             toast({
                 title: "Oops! Something went wrong.",
                 status: "error",
@@ -106,7 +114,25 @@ const EditProfilePage = () => {
                 position: "top",
                 duration: 2000,
             });
-        }
+        },
+    });
+
+    const onSubmit = (data: EditProfileTypes) => {
+        const formData = new FormData();
+        formData.set("username", data.username);
+        formData.set("bio", data.bio);
+        formData.set("facebook", data.facebook);
+        formData.set("instagram", data.instagram);
+        formData.set("twitter", data.twitter);
+        formData.set("discord", data.discord);
+        formData.set("reddit", data.reddit);
+        formData.set("telegram", data.telegram);
+        formData.set("tiktok", data.tiktok);
+        formData.set("youtube", data.youtube);
+        formData.set("github", data.github);
+        formData.set("profilePic", data.profilePic);
+
+        editProfileMutation.mutate(formData);
     };
 
     useEffect(() => {
@@ -114,15 +140,13 @@ const EditProfilePage = () => {
         if (!token) {
             redirect("/login");
         }
-        setUsername(accountUser?.username || "");
-        setBio(accountUser?.bio || "");
     }, []);
 
     return (
         <div className="w-full text-gray-200 min-h-screen flex justify-center items-center">
             <form
                 className="w-[50rem] flex flex-col items-center"
-                onSubmit={handleSubmit}
+                onSubmit={handleSubmit(onSubmit)}
             >
                 <div className="flex flex-col lg:flex-row items-center">
                     <Avatar
@@ -160,29 +184,21 @@ const EditProfilePage = () => {
                         </FormLabel>
                         <Input
                             type="text"
-                            name="username"
                             borderColor="gray"
-                            onChange={(e) => {
-                                setUsername(e.target.value);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={username ?? ""}
                             autoComplete="off"
+                            {...register("username")}
+                            defaultValue={accountUser?.username}
                         />
                         <Input
                             type="text"
-                            name="bio"
                             placeholder="Bio"
                             size="sm"
                             mt={2}
                             rounded="md"
                             borderColor="gray"
-                            onChange={(e) => {
-                                setBio(e.target.value);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={bio ?? ""}
                             autoComplete="off"
+                            {...register("bio")}
+                            defaultValue={accountUser?.bio}
                         />
                     </VStack>
                 </div>
@@ -193,15 +209,11 @@ const EditProfilePage = () => {
                             <FaFacebook size={22} className="text-blue-500" />
                         </InputLeftElement>
                         <Input
-                            name="facebook"
                             type="url"
                             placeholder="Facebook"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.facebook ?? ""}
+                            {...register("facebook")}
+                            defaultValue={profileSocials?.facebook}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -209,15 +221,11 @@ const EditProfilePage = () => {
                             <FaInstagram size={22} className="text-pink-300" />
                         </InputLeftElement>
                         <Input
-                            name="instagram"
                             type="url"
                             placeholder="Instagram"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.instagram ?? ""}
+                            {...register("instagram")}
+                            defaultValue={profileSocials?.instagram}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -225,15 +233,11 @@ const EditProfilePage = () => {
                             <FaTwitter size={22} className="text-blue-400" />
                         </InputLeftElement>
                         <Input
-                            name="twitter"
                             type="url"
                             placeholder="Twitter"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.twitter ?? ""}
+                            {...register("twitter")}
+                            defaultValue={profileSocials?.twitter}
                         />
                     </InputGroup>
 
@@ -242,15 +246,11 @@ const EditProfilePage = () => {
                             <FaDiscord size={22} className="text-blue-500" />
                         </InputLeftElement>
                         <Input
-                            name="discord"
                             type="url"
                             placeholder="Discord"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.discord ?? ""}
+                            {...register("discord")}
+                            defaultValue={profileSocials?.discord}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -258,15 +258,11 @@ const EditProfilePage = () => {
                             <FaReddit size={22} className="text-orange-400" />
                         </InputLeftElement>
                         <Input
-                            name="reddit"
                             type="url"
                             placeholder="Reddit"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.reddit ?? ""}
+                            {...register("reddit")}
+                            defaultValue={profileSocials?.reddit}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -277,15 +273,11 @@ const EditProfilePage = () => {
                             />
                         </InputLeftElement>
                         <Input
-                            name="telegram"
                             type="url"
                             placeholder="Telegram"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.telegram ?? ""}
+                            {...register("telegram")}
+                            defaultValue={profileSocials?.telegram}
                         />
                     </InputGroup>
 
@@ -294,15 +286,11 @@ const EditProfilePage = () => {
                             <FaTiktok size={18} />
                         </InputLeftElement>
                         <Input
-                            name="tiktok"
                             type="url"
                             placeholder="Tiktok"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.tiktok ?? ""}
+                            {...register("tiktok")}
+                            defaultValue={profileSocials?.tiktok}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -310,15 +298,11 @@ const EditProfilePage = () => {
                             <FaYoutube size={22} className="text-red-500" />
                         </InputLeftElement>
                         <Input
-                            name="youtube"
                             type="url"
                             placeholder="Youtube"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.youtube ?? ""}
+                            {...register("youtube")}
+                            defaultValue={profileSocials?.youtube}
                         />
                     </InputGroup>
                     <InputGroup>
@@ -326,15 +310,11 @@ const EditProfilePage = () => {
                             <FaGithub size={20} className="" />
                         </InputLeftElement>
                         <Input
-                            name="github"
                             type="url"
                             placeholder="Github"
                             borderColor="gray"
-                            onChange={(e) => {
-                                handleInputChange(e);
-                                setIsSomethingChanged(true);
-                            }}
-                            value={socialInputs?.github ?? ""}
+                            {...register("github")}
+                            defaultValue={profileSocials?.github}
                         />
                     </InputGroup>
                 </div>
@@ -344,9 +324,9 @@ const EditProfilePage = () => {
                     w="10rem"
                     colorScheme="teal"
                     mt={7}
-                    isLoading={isLoading}
+                    isLoading={editProfileMutation.isLoading}
                     spinnerPlacement="start"
-                    isDisabled={!isSomethingChanged}
+                    // isDisabled={!isSomethingChanged}
                 >
                     Save Changes
                 </Button>

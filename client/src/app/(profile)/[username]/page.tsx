@@ -25,8 +25,6 @@ const ProfilePage = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accountUser = userStore((state) => state.accountUser);
 
-    console.log(accountUser);
-
     const userProfileQuery = useQuery({
         queryKey: ["user", "profile", params],
         queryFn: async () => {

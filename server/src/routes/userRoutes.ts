@@ -5,7 +5,7 @@ import checkAuth from "../middleware/authMiddleware";
 import {
     getAccountDetails,
     getUserProfile,
-    updateAccountDetails,
+    updateAccountDetailsAndSocials,
 } from "../controllers/userController";
 
 const storage = multer.diskStorage({
@@ -25,7 +25,7 @@ router.put(
     "/details/update",
     checkAuth,
     upload.single("profilePic"),
-    updateAccountDetails
+    updateAccountDetailsAndSocials
 );
 
 export default router;
