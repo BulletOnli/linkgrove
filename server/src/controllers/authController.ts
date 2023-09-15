@@ -6,7 +6,7 @@ import { generateToken } from "../utils/jwtToken";
 
 export const registerUser = asyncHandler(async (req, res) => {
     const { username, password, confirmPassword } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).select(["username"]);
 
     if (user) {
         res.status(403);
@@ -49,7 +49,11 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+    const user = await User.findOne({ username }).select([
+        "username",
+        "password",
+    ]);
+
     if (!user) {
         res.status(403);
         throw new Error("User doesn't exist");

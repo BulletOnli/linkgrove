@@ -70,7 +70,7 @@ const HomePage = () => {
                 <div className="w-full h-full flex flex-col justify-center mb-6 lg:mb-0">
                     <Link
                         href="/"
-                        className="text-lg lg:text-3xl text-[#00CCCC] font-extrabold tracking-wider"
+                        className="text-lg lg:text-2xl text-[#00CCCC] font-extrabold tracking-wider"
                     >
                         LinkGrove
                     </Link>
@@ -80,42 +80,50 @@ const HomePage = () => {
                 </div>
                 <Spacer />
                 <div className="w-full h-full flex flex-col items-center gap-1">
-                    <h2 className="text-lg font-bold mb-2">Socials</h2>
+                    <h2 className=" font-bold mb-1">Socials</h2>
                     <Link
                         href="https://www.facebook.com/Solidbullet/"
                         target="_blank"
-                        className="text-gray-400"
+                        className="text-gray-400 text-sm"
                     >
                         Facebook
                     </Link>
                     <Link
                         href="https://www.instagram.com/gem.muel/"
                         target="_blank"
-                        className="text-gray-400"
+                        className="text-gray-400 text-sm"
                     >
                         Instagram
                     </Link>
                     <Link
                         href="https://github.com/BulletOnli"
                         target="_blank"
-                        className="text-gray-400"
+                        className="text-gray-400 text-sm"
                     >
                         Github
                     </Link>
                 </div>
                 <div className="w-full h-full flex flex-col items-center gap-1">
-                    <h2 className="text-lg font-bold mb-2">Open Source</h2>
+                    <h2 className=" font-bold mb-1">Open Source</h2>
                     <Link
                         href="https://github.com/BulletOnli/weblinks"
                         target="_blank"
-                        className="text-gray-400"
+                        className="text-gray-400 text-sm"
                     >
                         Contribute
                     </Link>
-                    <Link href="#" target="_blank" className="text-gray-400">
+                    <Link
+                        href="#"
+                        target="_blank"
+                        className="text-gray-400 text-sm"
+                    >
                         Bug Report
                     </Link>
-                    <Link href="#" target="_blank" className="text-gray-400">
+                    <Link
+                        href="#"
+                        target="_blank"
+                        className="text-gray-400 text-sm"
+                    >
                         Suggest feature
                     </Link>
                 </div>

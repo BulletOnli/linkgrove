@@ -6,6 +6,7 @@ import {
     IconButton,
     VStack,
     useDisclosure,
+    Button,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { AiFillHeart, AiOutlineHeart } from "react-icons/ai";
@@ -15,9 +16,10 @@ import { FaTrash } from "react-icons/fa";
 import AlertDelete from "./modal/AlertDelete";
 import EditLinkModal from "./modal/EditLinkModal";
 import { useRouter } from "next/navigation";
-import userStore from "../zustandStore/userStore";
+import userStore, { UserType } from "../zustandStore/userStore";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { API_URL } from "../api/userApi";
 
 export type LinkType = {
     creator: string;
@@ -33,20 +35,19 @@ export type LinkType = {
 };
 
 type LinkCardProps = {
-    isOtherProfile: boolean;
     link: LinkType;
-    params: string;
+    userProfileInfo: UserType;
 };
 
-const LinkCard = (props: LinkCardProps) => {
+const LinkCard = ({ link, userProfileInfo }: LinkCardProps) => {
     const queryClient = useQueryClient();
     const router = useRouter();
     const editModal = useDisclosure();
     const deleteModal = useDisclosure();
     const accountUser = userStore((state) => state.accountUser);
 
-    const { title, url, thumbnail, likes, github, _id } = props.link;
-    const isOtherProfile = props.isOtherProfile;
+    const { title, url, thumbnail, likes, github, _id } = link;
+    const isOtherProfile = accountUser?.username !== userProfileInfo.username;
 
     const isLiked = Object.keys(likes).find((id) => id === accountUser?._id);
     const likeCount = !likes ? 0 : Object.keys(likes).length;
@@ -55,7 +56,7 @@ const LinkCard = (props: LinkCardProps) => {
     const toggleLikeMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.put(
-                `http://localhost:8080/links/like?linkId=${_id}`,
+                `${API_URL}/links/like?linkId=${_id}`,
                 { userId },
                 {
                     headers: {
@@ -69,7 +70,11 @@ const LinkCard = (props: LinkCardProps) => {
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries(["user", "profile", props.params]);
+            queryClient.invalidateQueries([
+                "user",
+                "links",
+                userProfileInfo._id,
+            ]);
         },
     });
 
@@ -145,20 +150,25 @@ const LinkCard = (props: LinkCardProps) => {
                                     <BsGithub className="cursor-pointer hover:text-blue-500" />
                                 </Link>
                             )}
-                            <Flex alignItems="center" gap={1}>
-                                {isLiked ? (
-                                    <AiFillHeart
-                                        className="text-xl cursor-pointer text-red-700"
-                                        onClick={handleToggle}
-                                    />
-                                ) : (
-                                    <AiOutlineHeart
-                                        className="text-xl cursor-pointer "
-                                        onClick={handleToggle}
-                                    />
-                                )}
+
+                            <Button
+                                iconSpacing={1}
+                                p={0}
+                                bg="transparent"
+                                colorScheme=""
+                                size="xs"
+                                leftIcon={
+                                    isLiked ? (
+                                        <AiFillHeart className="text-xl cursor-pointer text-red-700" />
+                                    ) : (
+                                        <AiOutlineHeart className="text-xl cursor-pointer " />
+                                    )
+                                }
+                                onClick={handleToggle}
+                                isLoading={toggleLikeMutation.isLoading}
+                            >
                                 <Text fontSize="sm">{likeCount}</Text>
-                            </Flex>
+                            </Button>
                         </HStack>
                     </HStack>
                 </div>
@@ -171,7 +181,7 @@ const LinkCard = (props: LinkCardProps) => {
                 accountUser={accountUser}
             />
             <EditLinkModal
-                link={props.link}
+                link={link}
                 isOpen={editModal.isOpen}
                 onClose={editModal.onClose}
                 accountUser={accountUser}

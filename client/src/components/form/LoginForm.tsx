@@ -12,6 +12,7 @@ import { useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { API_URL } from "@/src/api/userApi";
 
 const LoginForm = () => {
     const toast = useToast();
@@ -22,7 +23,7 @@ const LoginForm = () => {
     const loginMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.post(
-                "http://localhost:8080/auth/login",
+                `${API_URL}/auth/login`,
                 { username, password },
                 {
                     headers: {
@@ -79,7 +80,7 @@ const LoginForm = () => {
                         _focus={{ bg: "gray.700" }}
                         border="none"
                         required
-                        // _hover={false}
+                        _hover={{}}
                         autoComplete="off"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
@@ -98,7 +99,7 @@ const LoginForm = () => {
                         _focus={{ bg: "gray.700" }}
                         border="none"
                         required
-                        // _hover={false}
+                        _hover={{}}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />

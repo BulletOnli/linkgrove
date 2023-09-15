@@ -1,7 +1,7 @@
 import * as globalTypes from "../types/global";
 import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
-import User, { UserType } from "../models/userModel";
+import User from "../models/userModel";
 import { Request, Response, NextFunction } from "express";
 
 // just returns the account details

@@ -13,6 +13,7 @@ import { useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { UserType } from "@/src/zustandStore/userStore";
+import { API_URL } from "@/src/api/userApi";
 
 type AlertDeleteProps = {
     isOpen: boolean;
@@ -34,7 +35,7 @@ const AlertDelete = ({
     const deleteLinkMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.delete(
-                `http://localhost:8080/links/delete?id=${id}`,
+                `${API_URL}/links/delete?id=${id}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -47,11 +48,7 @@ const AlertDelete = ({
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries([
-                "user",
-                "profile",
-                accountUser?.username,
-            ]);
+            queryClient.invalidateQueries(["user", "links", accountUser?._id]);
             toast({
                 title: "Link Deleted!",
                 status: "success",

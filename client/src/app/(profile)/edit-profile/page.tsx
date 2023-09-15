@@ -26,8 +26,9 @@ import { redirect } from "next/navigation";
 import userStore from "@/src/zustandStore/userStore";
 import { SocialsType } from "@/src/components/profile/SocialsGrid";
 import { useForm } from "react-hook-form";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
+import { API_URL } from "@/src/api/userApi";
 
 interface EditProfileTypes extends SocialsType {
     username: string;
@@ -36,6 +37,7 @@ interface EditProfileTypes extends SocialsType {
 }
 
 const EditProfilePage = () => {
+    const queryClient = useQueryClient();
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState("");
     const { register, handleSubmit, setValue } = useForm<EditProfileTypes>();
@@ -47,7 +49,7 @@ const EditProfilePage = () => {
         queryKey: ["user", "profile", "details", accountUser?._id],
         queryFn: async () => {
             const response = await axios.get(
-                `http://localhost:8080/users/user/${accountUser?.username}`,
+                `${API_URL}/users/user/${accountUser?.username}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -80,7 +82,7 @@ const EditProfilePage = () => {
     const editProfileMutation = useMutation({
         mutationFn: async (data: FormData) => {
             const response = await axios.put(
-                `http://localhost:8080/users/details/update?socialsId=${profileSocials?._id}`,
+                `${API_URL}/users/details/update?socialsId=${profileSocials?._id}`,
                 data,
                 {
                     headers: {
@@ -94,6 +96,13 @@ const EditProfilePage = () => {
             return response.data;
         },
         onSuccess: () => {
+            queryClient.invalidateQueries([
+                "user",
+                "profile",
+                "details",
+                accountUser?._id,
+            ]);
+
             getAccountUser(); // update the state of accountUser
             toast({
                 title: "Details Updated",
@@ -104,9 +113,7 @@ const EditProfilePage = () => {
             });
             // setPreviewImage("");
         },
-        onError: (err: any) => {
-            console.log(err);
-
+        onError: () => {
             toast({
                 title: "Oops! Something went wrong.",
                 status: "error",

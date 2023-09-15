@@ -18,11 +18,11 @@ import {
 import { useState, ChangeEvent, FormEvent } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { postRequest } from "@/src/api/fetcher";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import userStore, { UserType } from "@/src/zustandStore/userStore";
 import { useForm } from "react-hook-form";
+import { API_URL } from "@/src/api/userApi";
 
 type NewLinkType = {
     title: string;
@@ -58,26 +58,18 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
 
     const newLinkMutation = useMutation({
         mutationFn: async (data: FormData) => {
-            const response = await axios.post(
-                "http://localhost:8080/links/create",
-                data,
-                {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "weblinksToken"
-                        )}`,
-                    },
-                }
-            );
+            const response = await axios.post(`${API_URL}/links/create`, data, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem(
+                        "weblinksToken"
+                    )}`,
+                },
+            });
 
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries([
-                "user",
-                "profile",
-                accountUser?.username,
-            ]);
+            queryClient.invalidateQueries(["user", "links", accountUser?._id]);
 
             toast({
                 title: "New link created!",
@@ -166,6 +158,7 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
                                     border="none"
                                     autoComplete="off"
                                     {...register("title", { required: true })}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -181,6 +174,7 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
                                     border="none"
                                     autoComplete="off"
                                     {...register("url", { required: true })}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -196,6 +190,7 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
                                     border="none"
                                     autoComplete="off"
                                     {...register("github")}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                         </VStack>

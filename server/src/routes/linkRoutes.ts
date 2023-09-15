@@ -3,7 +3,7 @@ import multer from "multer";
 import {
     createLink,
     deleteLink,
-    getLink,
+    getAllLinks,
     toggleLike,
     updateLink,
 } from "../controllers/linkController";
@@ -21,11 +21,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.route("/:id").get(getLink);
+router.get("/all", getAllLinks);
 
 router.post("/create", checkAuth, upload.single("thumbnail"), createLink);
-router.put("/update", upload.single("thumbnail"), updateLink);
-router.delete("/delete", deleteLink);
+router.put("/update", checkAuth, upload.single("thumbnail"), updateLink);
+router.delete("/delete", checkAuth, deleteLink);
 
 router.put("/like", toggleLike);
 

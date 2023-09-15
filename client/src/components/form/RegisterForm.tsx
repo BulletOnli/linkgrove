@@ -12,6 +12,7 @@ import { useState, ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
+import { API_URL } from "@/src/api/userApi";
 
 type RegisterInfoType = {
     username: string;
@@ -36,7 +37,7 @@ const RegisterForm = () => {
     const registerMutation = useMutation({
         mutationFn: async () => {
             const response = await axios.post(
-                "http://localhost:8080/auth/register",
+                `${API_URL}/auth/register`,
                 registerDetails,
                 {
                     headers: {
@@ -91,7 +92,7 @@ const RegisterForm = () => {
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
-                        //
+                        _hover={{}}
                         autoComplete="off"
                         onChange={handleChange}
                         required
@@ -109,6 +110,7 @@ const RegisterForm = () => {
                         bg="gray.700"
                         _focus={{ bg: "gray.700" }}
                         border="none"
+                        _hover={{}}
                         onChange={handleChange}
                         required
                     />
@@ -127,6 +129,7 @@ const RegisterForm = () => {
                         border="none"
                         onChange={handleChange}
                         required
+                        _hover={{}}
                     />
                 </InputGroup>
                 <Button

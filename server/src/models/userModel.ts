@@ -1,32 +1,28 @@
 import mongoose from "mongoose";
 
-const userSchema = new mongoose.Schema(
-    {
-        username: {
+const userSchema = new mongoose.Schema({
+    username: {
+        type: String,
+        unique: true,
+        required: [true, "Username is required!"],
+    },
+    password: {
+        type: String,
+        required: [true, "Password is required!"],
+        minLength: 8,
+    },
+    bio: {
+        type: String,
+    },
+    profilePic: {
+        url: {
             type: String,
-            unique: true,
-            required: [true, "Username is required!"],
         },
-        password: {
+        id: {
             type: String,
-            required: [true, "Password is required!"],
-        },
-        bio: {
-            type: String,
-        },
-        profilePic: {
-            url: {
-                type: String,
-            },
-            id: {
-                type: String,
-            },
         },
     },
-    {
-        timestamps: true,
-    }
-);
+});
 
 export type UserType = mongoose.InferSchemaType<typeof userSchema>;
 

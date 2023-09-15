@@ -7,9 +7,10 @@ import {
     Avatar,
     Text,
     useToast,
+    HStack,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { BsFillPersonFill, BsGear } from "react-icons/bs";
+import { BsFillPersonFill, BsGear, BsHeart, BsHeartFill } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
@@ -80,6 +81,16 @@ const Navbar = () => {
                             iconSpacing={2}
                         >
                             My Account
+                        </MenuItem>
+                        <MenuItem
+                            as={Link}
+                            href="/edit-profile"
+                            bg="#0D1117"
+                            _hover={{ bg: "#343541" }}
+                            icon={<BsGear size={18} />}
+                            iconSpacing={2}
+                        >
+                            Settings
                         </MenuItem>
                         <MenuItem
                             as={Text}

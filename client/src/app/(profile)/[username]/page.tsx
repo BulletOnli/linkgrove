@@ -19,17 +19,19 @@ import { useParams } from "next/navigation";
 import userStore from "@/src/zustandStore/userStore";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { API_URL } from "@/src/api/userApi";
 
 const ProfilePage = () => {
     const params = useParams().username;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accountUser = userStore((state) => state.accountUser);
 
+    // contains user info and social media links
     const userProfileQuery = useQuery({
         queryKey: ["user", "profile", params],
         queryFn: async () => {
             const response = await axios.get(
-                `http://localhost:8080/users/user/${params}`,
+                `${API_URL}/users/user/${params}`,
                 {
                     headers: {
                         Authorization: `Bearer ${localStorage.getItem(
@@ -41,6 +43,25 @@ const ProfilePage = () => {
 
             return response.data;
         },
+    });
+
+    const userLinksQuery = useQuery({
+        queryKey: ["user", "links", userProfileQuery.data?.user._id],
+        queryFn: async () => {
+            const response = await axios.get(
+                `${API_URL}/links/all?userId=${userProfileQuery.data?.user._id}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem(
+                            "weblinksToken"
+                        )}`,
+                    },
+                }
+            );
+
+            return response.data;
+        },
+        enabled: userProfileQuery.data != null,
     });
 
     const isOtherProfile =
@@ -91,18 +112,17 @@ const ProfilePage = () => {
                     </HStack>
 
                     <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-8">
-                        {userProfileQuery.isLoading ? "Loading Links..." : ""}
+                        {userLinksQuery.isLoading ? "Loading Links..." : ""}
 
-                        {userProfileQuery.data?.links?.map((link: LinkType) => (
+                        {userLinksQuery.data?.map((link: LinkType) => (
                             <LinkCard
                                 link={link}
                                 key={link._id}
-                                isOtherProfile={isOtherProfile}
-                                params={params}
+                                userProfileInfo={userProfileQuery.data?.user}
                             />
                         ))}
 
-                        {userProfileQuery.data?.links?.length <= 0
+                        {userLinksQuery.data?.length <= 0
                             ? "User doesn't have any links yet"
                             : ""}
                     </div>

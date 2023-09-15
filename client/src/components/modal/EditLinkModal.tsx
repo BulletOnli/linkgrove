@@ -19,12 +19,12 @@ import {
 import { useState, ChangeEvent, FormEvent } from "react";
 import { MdTitle, MdLink } from "react-icons/md";
 import { FaGithub } from "react-icons/fa";
-import { putRequest } from "@/src/api/fetcher";
 import { LinkType } from "../LinkCard";
 import { useForm } from "react-hook-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import userStore, { UserType } from "@/src/zustandStore/userStore";
+import { API_URL } from "@/src/api/userApi";
 
 type EditLinkType = {
     title: string;
@@ -67,7 +67,7 @@ const EditLinkModal = ({
     const newLinkMutation = useMutation({
         mutationFn: async (data: FormData) => {
             const response = await axios.put(
-                `http://localhost:8080/links/update?id=${link?._id}`,
+                `${API_URL}/links/update?id=${link?._id}`,
                 data,
                 {
                     headers: {
@@ -81,11 +81,7 @@ const EditLinkModal = ({
             return response.data;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries([
-                "user",
-                "profile",
-                accountUser?.username,
-            ]);
+            queryClient.invalidateQueries(["user", "links", accountUser?._id]);
 
             toast({
                 title: "Link Updated",
@@ -178,6 +174,7 @@ const EditLinkModal = ({
                                     autoComplete="off"
                                     {...register("title")}
                                     defaultValue={link.title}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -194,6 +191,7 @@ const EditLinkModal = ({
                                     autoComplete="off"
                                     {...register("url")}
                                     defaultValue={link.url}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                             <InputGroup>
@@ -210,6 +208,7 @@ const EditLinkModal = ({
                                     autoComplete="off"
                                     {...register("github")}
                                     defaultValue={link.github}
+                                    _hover={{}}
                                 />
                             </InputGroup>
                         </VStack>
@@ -220,7 +219,6 @@ const EditLinkModal = ({
                             Cancel
                         </Button>
                         <Button
-                            // isDisabled={!isSomethingChanged}
                             type="submit"
                             colorScheme="teal"
                             isLoading={newLinkMutation.isLoading}

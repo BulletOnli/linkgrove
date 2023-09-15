@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { getRequest } from "../api/fetcher";
+import { fetchAccountUser } from "../api/userApi";
 
 export type UserType = {
     username: string;
@@ -23,7 +23,7 @@ const userStore = create<UserStoreType>((set, get) => ({
     isLoggedIn: false,
     accountUser: null,
     getAccountUser: async () => {
-        const accountUser = await getRequest("/users/details");
+        const accountUser = await fetchAccountUser();
         // automatically remove the token when it expires
         if (!accountUser) {
             localStorage.removeItem("weblinksToken");

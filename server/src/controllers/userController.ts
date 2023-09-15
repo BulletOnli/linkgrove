@@ -5,30 +5,31 @@ import User from "../models/userModel";
 import Link from "../models/linkModel";
 import { deleteImg, uploadImg } from "../utils/cloudinary";
 
-// Get the user profile regardless of the auth status
-// public
+// Get the profile details
 export const getUserProfile = asyncHandler(
     async (req: Request, res: Response) => {
         const { username } = req.params;
-        const user = await User.findOne({ username }).select("-password");
+        const user = await User.findOne({ username }).select([
+            "username",
+            "bio",
+            "profilePic",
+        ]);
 
         if (!user) {
             res.status(404);
             throw new Error("User not Found");
         }
 
-        const links = await Link.find({ creator: user._id });
         const socials = await Socials.findOne({ creator: user._id });
 
         res.status(200).json({
             user,
-            links,
             socials,
         });
     }
 );
 
-// details of the account
+// details of the account logged in
 export const getAccountDetails = asyncHandler(
     async (req: Request, res: Response) => {
         const user = await User.findById(req.user?._id).select("-password");
@@ -37,6 +38,7 @@ export const getAccountDetails = asyncHandler(
     }
 );
 
+// Update username, bio and social media links
 export const updateAccountDetailsAndSocials = asyncHandler(
     async (req: Request, res: Response) => {
         const { socialsId } = req.query;
