@@ -1,5 +1,6 @@
 "use client";
 import LoginForm from "@/src/components/form/LoginForm";
+import { isTokenAvailable } from "@/src/utils/checkAccessToken";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -9,10 +10,13 @@ import { FaTiktok } from "react-icons/fa";
 
 const LoginPage = () => {
     useEffect(() => {
-        const token = localStorage.getItem("weblinksToken");
-        if (token) {
-            redirect("/");
-        }
+        const checkToken = async () => {
+            if (await isTokenAvailable()) {
+                redirect("/");
+            }
+        };
+
+        checkToken();
     }, []);
 
     return (

@@ -26,11 +26,7 @@ const LoginForm = () => {
                 `${API_URL}/auth/login`,
                 { username, password },
                 {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "weblinksToken"
-                        )}`,
-                    },
+                    withCredentials: true,
                 }
             );
 

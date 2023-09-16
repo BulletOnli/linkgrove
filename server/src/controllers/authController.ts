@@ -2,52 +2,92 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import User from "../models/userModel";
 import Socials from "../models/socialsModel";
-import { generateToken } from "../utils/jwtToken";
+import { getAccessToken, getRefreshToken } from "../utils/jwtToken";
+import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 
-export const registerUser = asyncHandler(async (req, res) => {
-    const { username, password, confirmPassword } = req.body;
-    const user = await User.findOne({ username }).select(["username"]);
+export const newAccessToken = asyncHandler(
+    async (req: Request, res: Response) => {
+        if (req.cookies.jwt) {
+            const refreshToken = req.cookies.jwt;
 
-    if (user) {
-        res.status(403);
-        throw new Error("Username already exist!");
+            jwt.verify(
+                refreshToken,
+                process.env.REFRESH_TOKEN_SECRET!,
+                (err: any, decoded: any) => {
+                    if (err) {
+                        res.status(403).clearCookie("jwt", {
+                            httpOnly: true,
+                            sameSite: "none",
+                            secure: true,
+                        });
+                    } else {
+                        res.json({ token: getAccessToken(decoded._id) });
+                    }
+                }
+            );
+        } else {
+            res.status(401);
+            throw new Error("Unauthorized, No Refresh token");
+        }
     }
+);
 
-    if (password.length < 8) {
-        res.status(400);
-        throw new Error("Password must be greater than 8 characters");
+export const registerUser = asyncHandler(
+    async (req: Request, res: Response) => {
+        const { username, password, confirmPassword } = req.body;
+        const user = await User.findOne({ username }).select(["username"]);
+
+        if (user) {
+            res.status(403);
+            throw new Error("Username already exist!");
+        }
+
+        if (password.length < 8) {
+            res.status(400);
+            throw new Error("Password must be greater than 8 characters");
+        }
+
+        if (password !== confirmPassword) {
+            res.status(403);
+            throw new Error("Password incorrect!");
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 12);
+        const newUser = await User.create({
+            username,
+            password: hashedPassword,
+            bio: "Bio",
+        });
+
+        const userDetails = {
+            username: newUser.username,
+            _id: newUser._id,
+            bio: newUser.bio,
+        };
+
+        // create instant document for socials accounts
+        await Socials.create({
+            creator: newUser._id,
+        });
+
+        const refreshToken = getRefreshToken(userDetails._id.toString());
+
+        res.cookie("jwt", refreshToken, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+            maxAge: 1000 * 60 * 60 * 24,
+        });
+
+        res.status(201).json({
+            user: userDetails,
+            token: getAccessToken(newUser._id.toString()),
+        });
     }
+);
 
-    if (password !== confirmPassword) {
-        res.status(403);
-        throw new Error("Password incorrect!");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 12);
-    const newUser = await User.create({
-        username,
-        password: hashedPassword,
-        bio: "Bio",
-    });
-
-    const userDetails = {
-        username: newUser.username,
-        _id: newUser._id,
-        bio: newUser.bio,
-    };
-
-    // create instant document for socials accounts
-    await Socials.create({
-        creator: newUser._id,
-    });
-
-    res.status(201).json({
-        user: userDetails,
-        token: generateToken(newUser._id.toString()),
-    });
-});
-
-export const loginUser = asyncHandler(async (req, res) => {
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const { username, password } = req.body;
     const user = await User.findOne({ username }).select([
         "username",
@@ -65,9 +105,18 @@ export const loginUser = asyncHandler(async (req, res) => {
     };
 
     if (user && (await bcrypt.compare(password, user.password))) {
+        const refreshToken = getRefreshToken(user._id.toString());
+
+        res.cookie("jwt", refreshToken, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+            maxAge: 1000 * 60 * 60 * 24,
+        });
+
         res.status(200).json({
             user: userDetails,
-            token: generateToken(user._id.toString()),
+            token: getAccessToken(user._id.toString()),
         });
     } else {
         res.status(404);

@@ -6,6 +6,7 @@ import cors from "cors";
 import morgan from "morgan";
 import { v2 as cloudinary } from "cloudinary";
 import errorHandler from "./middleware/errorHandler";
+import cookieParser from "cookie-parser";
 
 import authRoues from "./routes/authRoutes";
 import userRoutes from "./routes/userRoutes";
@@ -21,11 +22,12 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(
     cors({
-        origin: "*",
+        origin: "http://localhost:3000",
         credentials: true,
     })
 );
 app.use(helmet());
+app.use(cookieParser());
 
 app.get("/", (req: Request, res: Response) => {
     res.status(200).json("Hello World");

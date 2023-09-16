@@ -16,8 +16,11 @@ import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
 import { useEffect } from "react";
 import userStore from "../zustandStore/userStore";
+import { usePathname } from "next/navigation";
+import { isTokenAvailable } from "../utils/checkAccessToken";
 
 const Navbar = () => {
+    const pathname = usePathname();
     const toast = useToast();
     const { accountUser, getAccountUser, logoutUser } = userStore();
 
@@ -33,8 +36,11 @@ const Navbar = () => {
     };
 
     useEffect(() => {
+        const checkToken = async () => await isTokenAvailable();
+
         getAccountUser();
-    }, []);
+        checkToken();
+    }, [pathname]);
 
     return (
         <div className="absolute z-20 w-full flex justify-between py-4 px-6">

@@ -5,7 +5,6 @@ import userStore from "../zustandStore/userStore";
 
 const HomePage = () => {
     const accountUser = userStore((state) => state.accountUser);
-    const token = localStorage.getItem("weblinksToken");
 
     return (
         <div className="w-full flex flex-col items-center p-4">
@@ -20,11 +19,13 @@ const HomePage = () => {
                     </p>
                     <Button
                         as={Link}
-                        href={token ? `/${accountUser?.username}` : "/login"}
+                        href={
+                            accountUser ? `/${accountUser?.username}` : "/login"
+                        }
                         colorScheme="teal"
                         mt={5}
                     >
-                        {token ? "View Profile" : "Get Started"}
+                        {accountUser ? "View Profile" : "Get Started"}
                     </Button>
                 </div>
                 <div className="w-full lg:w-[50%] h-full flex justify-center items-center">

@@ -40,11 +40,7 @@ const RegisterForm = () => {
                 `${API_URL}/auth/register`,
                 registerDetails,
                 {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem(
-                            "weblinksToken"
-                        )}`,
-                    },
+                    withCredentials: true,
                 }
             );
 

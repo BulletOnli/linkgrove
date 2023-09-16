@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { fetchAccountUser } from "../api/userApi";
+import { isTokenAvailable } from "../utils/checkAccessToken";
 
 export type UserType = {
     username: string;
@@ -13,23 +14,21 @@ export type UserType = {
 
 type UserStoreType = {
     accountUser: UserType | null;
-    isLoggedIn: boolean;
     getAccountUser: () => void;
     logoutUser: () => void;
 };
 
 // personal details of the user only
 const userStore = create<UserStoreType>((set, get) => ({
-    isLoggedIn: false,
     accountUser: null,
     getAccountUser: async () => {
-        const accountUser = await fetchAccountUser();
-        // automatically remove the token when it expires
-        if (!accountUser) {
-            localStorage.removeItem("weblinksToken");
-        }
+        const response = await fetchAccountUser();
 
-        set({ accountUser: accountUser });
+        if ((await isTokenAvailable()) && response) {
+            set({ accountUser: response });
+        } else {
+            set({ accountUser: null });
+        }
     },
     logoutUser: () => {
         localStorage.removeItem("weblinksToken");

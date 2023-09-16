@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "@/src/api/userApi";
+import { isTokenAvailable } from "@/src/utils/checkAccessToken";
 
 interface EditProfileTypes extends SocialsType {
     username: string;
@@ -143,10 +144,13 @@ const EditProfilePage = () => {
     };
 
     useEffect(() => {
-        const token = localStorage.getItem("weblinksToken");
-        if (!token) {
-            redirect("/login");
-        }
+        const checkToken = async () => {
+            if (await isTokenAvailable()) {
+                redirect("/login");
+            }
+        };
+
+        checkToken();
     }, []);
 
     return (

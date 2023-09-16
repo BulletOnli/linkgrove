@@ -20,11 +20,13 @@ import userStore from "@/src/zustandStore/userStore";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "@/src/api/userApi";
+import Loading from "../../loading";
 
 const ProfilePage = () => {
     const params = useParams().username;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accountUser = userStore((state) => state.accountUser);
+    const getAccountUser = userStore((state) => state.getAccountUser);
 
     // contains user info and social media links
     const userProfileQuery = useQuery({
@@ -67,6 +69,7 @@ const ProfilePage = () => {
     const isOtherProfile =
         accountUser?.username !== userProfileQuery.data?.user?.username;
 
+    if (userProfileQuery.isLoading) return <Loading />;
     if (userProfileQuery.error) return <ErrorPage />;
 
     return (
