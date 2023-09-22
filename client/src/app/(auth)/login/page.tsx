@@ -3,16 +3,18 @@ import LoginForm from "@/src/components/form/LoginForm";
 import { isTokenAvailable } from "@/src/utils/checkAccessToken";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
 
 const LoginPage = () => {
+    const router = useRouter();
+
     useEffect(() => {
         const checkToken = async () => {
             if (await isTokenAvailable()) {
-                redirect("/");
+                router.push("/");
             }
         };
 

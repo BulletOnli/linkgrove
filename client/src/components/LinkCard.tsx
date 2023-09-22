@@ -20,6 +20,7 @@ import userStore, { UserType } from "../zustandStore/userStore";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../api/userApi";
+import { isTokenAvailable } from "../utils/checkAccessToken";
 
 export type LinkType = {
     creator: string;
@@ -78,8 +79,8 @@ const LinkCard = ({ link, userProfileInfo }: LinkCardProps) => {
         },
     });
 
-    const handleToggle = () => {
-        if (!localStorage.getItem("weblinksToken")) {
+    const handleToggle = async () => {
+        if (!(await isTokenAvailable())) {
             router.push("/login");
         } else {
             toggleLikeMutation.mutate();

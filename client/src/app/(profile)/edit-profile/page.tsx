@@ -22,7 +22,7 @@ import {
     FaReddit,
     FaYoutube,
 } from "react-icons/fa";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import userStore from "@/src/zustandStore/userStore";
 import { SocialsType } from "@/src/components/profile/SocialsGrid";
 import { useForm } from "react-hook-form";
@@ -38,6 +38,7 @@ interface EditProfileTypes extends SocialsType {
 }
 
 const EditProfilePage = () => {
+    const router = useRouter();
     const queryClient = useQueryClient();
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState("");
@@ -112,7 +113,6 @@ const EditProfilePage = () => {
                 position: "bottom-left",
                 duration: 3000,
             });
-            // setPreviewImage("");
         },
         onError: () => {
             toast({
@@ -145,16 +145,17 @@ const EditProfilePage = () => {
 
     useEffect(() => {
         const checkToken = async () => {
-            if (await isTokenAvailable()) {
-                redirect("/login");
+            if (!(await isTokenAvailable())) {
+                router.push("/login");
             }
         };
 
+        getAccountUser();
         checkToken();
     }, []);
 
     return (
-        <div className="w-full text-gray-200 min-h-screen flex justify-center items-center">
+        <div className="w-full text-gray-200 min-h-screen py-[5rem] lg:py-0 flex justify-center items-center">
             <form
                 className="w-[50rem] flex flex-col items-center"
                 onSubmit={handleSubmit(onSubmit)}
@@ -214,7 +215,7 @@ const EditProfilePage = () => {
                     </VStack>
                 </div>
 
-                <div className="grid grid-cols-3 justify-items-center gap-4 mt-[4rem]">
+                <div className="grid grid-cols-1 lg:grid-cols-3 justify-items-center gap-4 mt-[4rem]">
                     <InputGroup>
                         <InputLeftElement pointerEvents="none">
                             <FaFacebook size={22} className="text-blue-500" />

@@ -90,7 +90,7 @@ const ProfilePage = () => {
                     socials={userProfileQuery.data?.socials}
                 />
 
-                <div className="w-full flex flex-col p-4">
+                <div className="w-full flex flex-col mt-6 lg:mt-0 lg:p-4">
                     <HStack w="full" mb={6}>
                         <HStack>
                             <FormControl>
@@ -102,6 +102,7 @@ const ProfilePage = () => {
                                         type="search"
                                         placeholder="Find a link"
                                         autoComplete="off"
+                                        isDisabled
                                     />
                                 </InputGroup>
                             </FormControl>
