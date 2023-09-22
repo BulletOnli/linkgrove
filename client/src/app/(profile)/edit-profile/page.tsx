@@ -9,7 +9,7 @@ import {
     FormLabel,
     useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent, ReactElement } from "react";
 import { BsFillCameraFill } from "react-icons/bs";
 import {
     FaTiktok,
@@ -42,6 +42,7 @@ const EditProfilePage = () => {
     const queryClient = useQueryClient();
     const toast = useToast();
     const [previewImage, setPreviewImage] = useState("");
+
     const { register, handleSubmit, setValue } = useForm<EditProfileTypes>();
 
     const accountUser = userStore((state) => state.accountUser);
@@ -140,6 +141,8 @@ const EditProfilePage = () => {
         formData.set("github", data.github);
         formData.set("profilePic", data.profilePic);
 
+        console.log(data);
+
         editProfileMutation.mutate(formData);
     };
 
@@ -216,119 +219,71 @@ const EditProfilePage = () => {
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 justify-items-center gap-4 mt-[4rem]">
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
+                    <InputSocial
+                        register={register}
+                        name="facebook"
+                        defaultValue={profileSocials?.facebook}
+                        icon={
                             <FaFacebook size={22} className="text-blue-500" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Facebook"
-                            borderColor="gray"
-                            {...register("facebook")}
-                            defaultValue={profileSocials?.facebook}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
+                        }
+                    />
+                    <InputSocial
+                        register={register}
+                        name="instagram"
+                        defaultValue={profileSocials?.instagram}
+                        icon={
                             <FaInstagram size={22} className="text-pink-300" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Instagram"
-                            borderColor="gray"
-                            {...register("instagram")}
-                            defaultValue={profileSocials?.instagram}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                            <FaTwitter size={22} className="text-blue-400" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Twitter"
-                            borderColor="gray"
-                            {...register("twitter")}
-                            defaultValue={profileSocials?.twitter}
-                        />
-                    </InputGroup>
-
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                            <FaDiscord size={22} className="text-blue-500" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Discord"
-                            borderColor="gray"
-                            {...register("discord")}
-                            defaultValue={profileSocials?.discord}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
+                        }
+                    />
+                    <InputSocial
+                        register={register}
+                        name="twitter"
+                        defaultValue={profileSocials?.twitter}
+                        icon={<FaTwitter size={22} className="text-blue-400" />}
+                    />
+                    <InputSocial
+                        register={register}
+                        name="discord"
+                        defaultValue={profileSocials?.discord}
+                        icon={<FaDiscord size={22} className="text-blue-500" />}
+                    />
+                    <InputSocial
+                        register={register}
+                        name="reddit"
+                        defaultValue={profileSocials?.reddit}
+                        icon={
                             <FaReddit size={22} className="text-orange-400" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Reddit"
-                            borderColor="gray"
-                            {...register("reddit")}
-                            defaultValue={profileSocials?.reddit}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
+                        }
+                    />
+                    <InputSocial
+                        register={register}
+                        name="telegram"
+                        defaultValue={profileSocials?.telegram}
+                        icon={
                             <FaTelegramPlane
                                 size={22}
                                 className="text-blue-400"
                             />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Telegram"
-                            borderColor="gray"
-                            {...register("telegram")}
-                            defaultValue={profileSocials?.telegram}
-                        />
-                    </InputGroup>
-
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                            <FaTiktok size={18} />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Tiktok"
-                            borderColor="gray"
-                            {...register("tiktok")}
-                            defaultValue={profileSocials?.tiktok}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                            <FaYoutube size={22} className="text-red-500" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Youtube"
-                            borderColor="gray"
-                            {...register("youtube")}
-                            defaultValue={profileSocials?.youtube}
-                        />
-                    </InputGroup>
-                    <InputGroup>
-                        <InputLeftElement pointerEvents="none">
-                            <FaGithub size={20} className="" />
-                        </InputLeftElement>
-                        <Input
-                            type="url"
-                            placeholder="Github"
-                            borderColor="gray"
-                            {...register("github")}
-                            defaultValue={profileSocials?.github}
-                        />
-                    </InputGroup>
+                        }
+                    />
+                    <InputSocial
+                        register={register}
+                        name="tiktok"
+                        defaultValue={profileSocials?.tiktok}
+                        icon={<FaTiktok size={18} />}
+                    />
+                    <InputSocial
+                        register={register}
+                        name="youtube"
+                        defaultValue={profileSocials?.youtube}
+                        icon={<FaYoutube size={22} className="text-red-500" />}
+                    />
+                    <InputSocial
+                        register={register}
+                        name="github"
+                        defaultValue={profileSocials?.github}
+                        icon={<FaGithub size={20} />}
+                    />
                 </div>
 
                 <Button
@@ -338,12 +293,39 @@ const EditProfilePage = () => {
                     mt={7}
                     isLoading={editProfileMutation.isLoading}
                     spinnerPlacement="start"
-                    // isDisabled={!isSomethingChanged}
                 >
                     Save Changes
                 </Button>
             </form>
         </div>
+    );
+};
+
+const InputSocial = ({
+    register,
+    name,
+    defaultValue,
+    icon,
+}: {
+    register: any;
+    name: string;
+    defaultValue: string;
+    icon: ReactElement;
+}) => {
+    return (
+        <InputGroup>
+            <InputLeftElement pointerEvents="none">{icon}</InputLeftElement>
+            <Input
+                type="url"
+                placeholder={`${name[0].toUpperCase()}${name.slice(
+                    1,
+                    name.length
+                )}`}
+                borderColor="gray"
+                {...register(name)}
+                defaultValue={defaultValue}
+            />
+        </InputGroup>
     );
 };
 
