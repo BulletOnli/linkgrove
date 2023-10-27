@@ -104,7 +104,7 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         _id: user._id,
     };
 
-    if (user && (await bcrypt.compare(password, user.password))) {
+    if (user && (await bcrypt.compare(password, user.password!))) {
         const refreshToken = getRefreshToken(user._id.toString());
 
         res.cookie("jwt", refreshToken, {
