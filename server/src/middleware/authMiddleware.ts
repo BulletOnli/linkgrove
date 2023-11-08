@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel";
 import { Request, Response, NextFunction } from "express";
+import mongoose from "mongoose";
 
 // just returns the account details
 const checkAuth = asyncHandler(
@@ -14,9 +15,8 @@ const checkAuth = asyncHandler(
                 const decode = jwt.verify(
                     token,
                     process.env.ACCESS_TOKEN_SECRET!
-                ) as {
-                    _id: string;
-                };
+                ) as { _id: string };
+
                 if (!decode._id) {
                     req.user = null;
                 } else {

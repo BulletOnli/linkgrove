@@ -3,6 +3,7 @@ import { UserType } from "src/models/userModel";
 
 interface User extends UserType {
     _id: mongoose.Types.ObjectId;
+    password?: string;
 }
 
 declare global {
