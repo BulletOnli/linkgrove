@@ -14,7 +14,7 @@ export const newAccessToken = asyncHandler(
             jwt.verify(
                 refreshToken,
                 process.env.REFRESH_TOKEN_SECRET!,
-                (err: any, decoded: any) => {
+                (err: unknown, decoded: any) => {
                     if (err) {
                         res.status(403).clearCookie("jwt", {
                             httpOnly: true,

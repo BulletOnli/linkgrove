@@ -53,7 +53,7 @@ mongoose
     .then(() => {
         console.log(`Db connected`);
     })
-    .catch((err: any) => {
+    .catch((err: unknown) => {
         console.log(err);
     });
 

@@ -17,7 +17,9 @@ const checkAuth = asyncHandler(
                 ) as {
                     _id: string;
                 };
-                req.user = await User.findById(decode._id).select("-password");
+                req.user =
+                    (await User.findById(decode._id).select("-password")) ||
+                    null;
                 next();
             } catch (error) {
                 req.user = null;
