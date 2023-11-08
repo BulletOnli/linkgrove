@@ -17,9 +17,13 @@ const checkAuth = asyncHandler(
                 ) as {
                     _id: string;
                 };
-                req.user =
-                    (await User.findById(decode._id).select("-password")) ||
-                    null;
+                if (!decode._id) {
+                    req.user = null;
+                } else {
+                    req.user = await User.findById(decode._id).select(
+                        "-password"
+                    );
+                }
                 next();
             } catch (error) {
                 req.user = null;
