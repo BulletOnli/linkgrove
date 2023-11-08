@@ -15,15 +15,13 @@ const checkAuth = asyncHandler(
                 const decode = jwt.verify(
                     token,
                     process.env.ACCESS_TOKEN_SECRET!
-                ) as { _id: string };
+                ) as {
+                    _id: mongoose.Types.ObjectId;
+                };
 
-                if (!decode._id) {
-                    req.user = null;
-                } else {
-                    req.user = await User.findById(decode._id).select(
-                        "-password"
-                    );
-                }
+                if (!decode._id) throw new Error("NO decode");
+
+                req.user = await User.findById(decode._id).select("username");
                 next();
             } catch (error) {
                 req.user = null;
