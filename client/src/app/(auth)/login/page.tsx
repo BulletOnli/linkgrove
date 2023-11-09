@@ -1,26 +1,10 @@
-"use client";
 import LoginForm from "@/src/components/form/LoginForm";
-import { isTokenAvailable } from "@/src/utils/checkAccessToken";
 import { HStack, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { BsGithub, BsInstagram } from "react-icons/bs";
 import { FaTiktok } from "react-icons/fa";
 
 const LoginPage = () => {
-    const router = useRouter();
-
-    useEffect(() => {
-        const checkToken = async () => {
-            if (await isTokenAvailable()) {
-                router.push("/");
-            }
-        };
-
-        checkToken();
-    }, []);
-
     return (
         <div className="relative w-full flex flex-col justify-center items-center">
             <div className="absolute top-0 w-full lg:w-[70vw] flex items-center justify-between p-6">

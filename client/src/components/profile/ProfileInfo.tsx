@@ -1,3 +1,4 @@
+"use client";
 import { Avatar } from "@chakra-ui/react";
 import SocialsGrid, { SocialsType } from "./SocialsGrid";
 import Link from "next/link";

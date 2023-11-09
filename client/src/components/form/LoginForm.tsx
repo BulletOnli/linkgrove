@@ -8,11 +8,12 @@ import {
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BsFillPersonFill, BsShieldLockFill } from "react-icons/bs";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "@/src/api/userApi";
+import { isTokenAvailable } from "@/src/utils/checkAccessToken";
 
 const LoginForm = () => {
     const toast = useToast();
@@ -53,6 +54,16 @@ const LoginForm = () => {
             });
         },
     });
+
+    useEffect(() => {
+        const checkToken = async () => {
+            if (await isTokenAvailable()) {
+                router.push("/");
+            }
+        };
+
+        checkToken();
+    }, []);
 
     return (
         <div className="w-[28rem] bg-[#23232E] flex flex-col items-center p-4 lg:p-8 rounded-xl m-4">

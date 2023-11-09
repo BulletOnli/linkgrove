@@ -30,6 +30,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "@/src/api/userApi";
 import { isTokenAvailable } from "@/src/utils/checkAccessToken";
+import Loading from "../../loading";
 
 interface EditProfileTypes extends SocialsType {
     username: string;
@@ -48,6 +49,7 @@ const EditProfilePage = () => {
     const accountUser = userStore((state) => state.accountUser);
     const getAccountUser = userStore((state) => state.getAccountUser);
 
+    // User details and its socials
     const profileDetailsQuery = useQuery({
         queryKey: ["user", "profile", "details", accountUser?._id],
         queryFn: async () => {
@@ -156,6 +158,8 @@ const EditProfilePage = () => {
         getAccountUser();
         checkToken();
     }, []);
+
+    if (profileDetailsQuery?.isLoading) return <Loading />;
 
     return (
         <div className="w-full text-gray-200 min-h-screen py-[5rem] lg:py-0 flex justify-center items-center">

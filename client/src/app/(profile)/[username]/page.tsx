@@ -23,10 +23,9 @@ import { API_URL } from "@/src/api/userApi";
 import Loading from "../../loading";
 
 const ProfilePage = () => {
-    const params = useParams().username;
+    const params = useParams<{ username: string }>().username;
     const { isOpen, onOpen, onClose } = useDisclosure();
     const accountUser = userStore((state) => state.accountUser);
-    const getAccountUser = userStore((state) => state.getAccountUser);
 
     // contains user info and social media links
     const userProfileQuery = useQuery({
