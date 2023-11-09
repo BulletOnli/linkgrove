@@ -21,6 +21,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "@/src/api/userApi";
 import Loading from "../../loading";
+import LinkCard2 from "@/src/components/LinkCard2";
 
 const ProfilePage = () => {
     const params = useParams<{ username: string }>().username;
@@ -114,11 +115,11 @@ const ProfilePage = () => {
                         )}
                     </HStack>
 
-                    <div className="w-full grid justify-items-center justify-center grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 lg:gap-8">
+                    <div className="w-full flex flex-wrap justify-center lg:justify-start gap-4 lg:gap-8">
                         {userLinksQuery.isLoading ? "Loading Links..." : ""}
 
                         {userLinksQuery.data?.map((link: LinkType) => (
-                            <LinkCard
+                            <LinkCard2
                                 link={link}
                                 key={link._id}
                                 userProfileInfo={userProfileQuery.data?.user}
