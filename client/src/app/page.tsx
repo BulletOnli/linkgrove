@@ -1,41 +1,11 @@
-"use client";
-import { Button, Image, Spacer } from "@chakra-ui/react";
+import { Image, Spacer } from "@chakra-ui/react";
 import Link from "next/link";
-import userStore from "../zustandStore/userStore";
+import Header from "../components/Header";
 
 const HomePage = () => {
-    const accountUser = userStore((state) => state.accountUser);
-
     return (
         <div className="w-full flex flex-col items-center p-4">
-            <main className="w-full lg:h-screen flex flex-col items-center lg:flex-row p-4 mt-12 gap-6 lg:gap-0">
-                <div className="w-full lg:w-[50%] h-full text-[#D1D5DB] flex flex-col items-center justify-center gap-2 lg:p-4">
-                    <h1 className="text-center text-4xl font-bold">
-                        Connect, Share, Discover: <br /> Your Unified Profile
-                        Experience
-                    </h1>
-                    <p className="text-gray-300 text-center">
-                        Discover and share all your important links in one place
-                    </p>
-                    <Button
-                        as={Link}
-                        href={
-                            accountUser ? `/${accountUser?.username}` : "/login"
-                        }
-                        colorScheme="teal"
-                        mt={5}
-                    >
-                        {accountUser ? "View Profile" : "Get Started"}
-                    </Button>
-                </div>
-                <div className="w-full lg:w-[50%] h-full flex justify-center items-center">
-                    <Image
-                        src="/globe.svg"
-                        alt="homepage logo"
-                        className="w-[40rem]"
-                    />
-                </div>
-            </main>
+            <Header />
 
             <div className="w-full flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-16">
                 <div className="w-[15rem]  flex flex-col items-center justify-center p-6 border border-[#FFFFFF31]  rounded-lg">
@@ -66,6 +36,7 @@ const HomePage = () => {
                         Gain lots of reactions
                     </small>
                 </div>
+                HH
             </div>
             <footer className="w-full lg:w-[70vw] p-4 border-t border-t-gray-500 grid xl:grid-cols-4 justify-items-center items-center mt-[5rem] lg:mt-[20rem]">
                 <div className="w-full h-full flex flex-col justify-center mb-6 lg:mb-0">

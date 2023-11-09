@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import dynamic from "next/dynamic";
-// import App from "./App";
-const App = dynamic(() => import("./_app"), {
-    ssr: false,
-});
+import App from "./_app";
 
 export const metadata: Metadata = {
     title: "LinkGrove",
