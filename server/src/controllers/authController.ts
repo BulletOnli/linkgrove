@@ -6,7 +6,6 @@ import { getAccessToken, getRefreshToken } from "../utils/jwtToken";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { z } from "zod";
-import { fromZodError } from "zod-validation-error";
 
 export const newAccessToken = asyncHandler(
     async (req: Request, res: Response) => {
