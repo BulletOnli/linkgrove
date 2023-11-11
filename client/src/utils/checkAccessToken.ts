@@ -17,7 +17,6 @@ export const isTokenAvailable = async () => {
             const newAccessToken = await refreshAccessToken();
 
             if (newAccessToken) {
-                console.log("new token");
                 localStorage.setItem("weblinksToken", newAccessToken);
                 return true;
             } else {
@@ -30,7 +29,6 @@ export const isTokenAvailable = async () => {
         const newAccessToken = await refreshAccessToken();
 
         if (newAccessToken) {
-            console.log("new token");
             localStorage.setItem("weblinksToken", newAccessToken);
             return true;
         } else {

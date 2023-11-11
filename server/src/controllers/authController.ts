@@ -5,6 +5,7 @@ import Socials from "../models/socialsModel";
 import { getAccessToken, getRefreshToken } from "../utils/jwtToken";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { z } from "zod";
 
 export const newAccessToken = asyncHandler(
     async (req: Request, res: Response) => {
@@ -36,21 +37,33 @@ export const newAccessToken = asyncHandler(
 export const registerUser = asyncHandler(
     async (req: Request, res: Response) => {
         const { username, password, confirmPassword } = req.body;
-        const user = await User.findOne({ username }).select(["username"]);
+        const user = await User.findOne({ username })
+            .select(["username"])
+            .lean();
 
         if (user) {
             res.status(403);
             throw new Error("Username already exist!");
         }
 
-        if (password.length < 8) {
+        const validate = z.object({
+            username: z.string().min(3),
+            password: z.string().min(8),
+        });
+        const validateResults = validate.safeParse(req.body);
+
+        if (!validateResults.success) {
+            const error = validateResults.error.errors[0];
+
             res.status(400);
-            throw new Error("Password must be greater than 8 characters");
+            throw new Error(
+                error.message.replace(/String/g, error.path.toString())
+            );
         }
 
         if (password !== confirmPassword) {
-            res.status(403);
-            throw new Error("Password incorrect!");
+            res.status(400);
+            throw new Error("Password don't match");
         }
 
         const hashedPassword = await bcrypt.hash(password, 12);
@@ -89,10 +102,9 @@ export const registerUser = asyncHandler(
 
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
     const { username, password } = req.body;
-    const user = await User.findOne({ username }).select([
-        "username",
-        "password",
-    ]);
+    const user = await User.findOne({ username })
+        .select(["username", "password"])
+        .lean();
 
     if (!user) {
         res.status(403);

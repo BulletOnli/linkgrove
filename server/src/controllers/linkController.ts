@@ -5,7 +5,7 @@ import { Request, Response } from "express";
 
 export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
     const { userId } = req.query;
-    const links = await Link.find({ creator: userId });
+    const links = await Link.find({ creator: userId }).lean();
 
     res.status(200).json(links);
 });
@@ -13,9 +13,8 @@ export const getAllLinks = asyncHandler(async (req: Request, res: Response) => {
 export const createLink = asyncHandler(async (req: Request, res: Response) => {
     if (!req.user) {
         res.status(404);
-        throw new Error("Please log in");
+        throw new Error("Please login first");
     }
-
     const { title, url, github } = req.body;
 
     const img = await uploadImg(
@@ -50,7 +49,7 @@ export const createLink = asyncHandler(async (req: Request, res: Response) => {
 export const deleteLink = asyncHandler(async (req: Request, res: Response) => {
     const { id } = req.query;
 
-    const link = await Link.findById(id).select("thumbnail");
+    const link = await Link.findById(id).select("thumbnail").lean();
 
     if (link && link.thumbnail?.id) {
         // delete img in both cloudinary and local
