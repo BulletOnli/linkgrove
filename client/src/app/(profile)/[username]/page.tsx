@@ -82,7 +82,7 @@ const ProfilePage = () => {
                 fallbackSrc="https://via.placeholder.com/1400"
                 alt="Banner"
             />
-            <div className="relative w-full h-full flex flex-col items-center lg:flex-row lg:items-start p-4 gap-4 lg:gap-0">
+            <div className="relative w-full max-w-[1700px] h-full flex flex-col items-center lg:flex-row lg:items-start p-4 gap-4 lg:gap-0">
                 <ProfileInfo
                     userData={userProfileQuery.data?.user}
                     isOtherProfile={isOtherProfile}
@@ -115,7 +115,7 @@ const ProfilePage = () => {
                         )}
                     </HStack>
 
-                    <div className="w-full flex flex-wrap justify-center lg:justify-start gap-4 lg:gap-8">
+                    <div className="w-full flex flex-wrap justify-center lg:justify-start gap-4">
                         {userLinksQuery.isLoading ? "Loading Links..." : ""}
 
                         {userLinksQuery.data?.map((link: LinkType) => (

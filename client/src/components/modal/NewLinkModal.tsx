@@ -41,7 +41,7 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
     const toast = useToast();
     const queryClient = useQueryClient();
     const [previewImage, setPreviewImage] = useState<ArrayBuffer | string>("");
-    const { register, handleSubmit, setValue } = useForm<NewLinkType>();
+    const { register, handleSubmit, setValue, reset } = useForm<NewLinkType>();
 
     const handleImgUpload = (e: ChangeEvent<HTMLInputElement>) => {
         const file = e.target?.files?.[0];
@@ -78,6 +78,7 @@ const NewLinkModal = ({ isOpen, onClose, accountUser }: NewLinkModalProps) => {
                 position: "bottom-left",
                 duration: 3000,
             });
+            reset();
             onClose();
             setPreviewImage("");
         },

@@ -36,7 +36,6 @@ const HomePage = () => {
                         Gain lots of reactions
                     </small>
                 </div>
-                HH
             </div>
             <footer className="w-full lg:w-[70vw] p-4 border-t border-t-gray-500 grid xl:grid-cols-4 justify-items-center items-center mt-[5rem] lg:mt-[20rem]">
                 <div className="w-full h-full flex flex-col justify-center mb-6 lg:mb-0">

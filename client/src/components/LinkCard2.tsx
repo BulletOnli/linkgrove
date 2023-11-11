@@ -90,7 +90,7 @@ const LinkCard2 = ({ link, userProfileInfo }: LinkCard2Props) => {
 
     return (
         <>
-            <div className="bg-black relative max-w-[18rem] flex flex-grow flex-col items-center border border-[#FFFFFF31] hover:shadow-custom4 rounded-xl">
+            <div className="bg-black relative w-[18rem] max-w-[18rem] flex flex-grow flex-col items-center border border-[#FFFFFF31] hover:shadow-custom4 rounded-xl">
                 {!isOtherProfile && (
                     <VStack
                         position="absolute"
@@ -137,11 +137,9 @@ const LinkCard2 = ({ link, userProfileInfo }: LinkCard2Props) => {
                         <Link
                             href={url}
                             target="_blank"
-                            className="w-[11rem] overflow-hidden whitespace-nowrap mt-[-2px]"
+                            className="w-[11rem] text-[10px] text-gray-400 overflow-hidden whitespace-nowrap"
                         >
-                            <small className="text-xs text-gray-400 ">
-                                {url}
-                            </small>
+                            {url}
                         </Link>
                     </div>
 

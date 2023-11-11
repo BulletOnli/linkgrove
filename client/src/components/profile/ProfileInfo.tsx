@@ -24,7 +24,7 @@ const ProfileInfo = ({
     }
 
     return (
-        <div className="xl:sticky xl:top-[10rem] w-full md:w-[40rem] lg:h-[35rem] flex flex-col items-center">
+        <div className="xl:sticky xl:top-[10rem] w-full md:w-[30rem] lg:h-[35rem] flex flex-col items-center">
             <Avatar
                 name={userData?.username}
                 src={userData?.profilePic?.url}

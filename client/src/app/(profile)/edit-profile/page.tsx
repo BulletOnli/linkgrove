@@ -143,8 +143,6 @@ const EditProfilePage = () => {
         formData.set("github", data.github);
         formData.set("profilePic", data.profilePic);
 
-        console.log(data);
-
         editProfileMutation.mutate(formData);
     };
 
