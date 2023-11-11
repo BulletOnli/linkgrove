@@ -4,7 +4,7 @@ import Socials from "../models/socialsModel";
 export const getAllSocials = asyncHandler(async (req, res) => {
     const { creator } = req.query;
     try {
-        const socialLinks = await Socials.findOne({ creator });
+        const socialLinks = await Socials.findOne({ creator }).lean();
         res.status(200).json(socialLinks);
     } catch (error) {
         res.status(404);
