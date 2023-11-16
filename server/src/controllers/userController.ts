@@ -30,7 +30,7 @@ export const getUserProfile = asyncHandler(
 export const getAccountDetails = asyncHandler(
     async (req: Request, res: Response) => {
         const user = await User.findById(req.user?._id)
-            .select("-password")
+            .select(["username", "profilePic", "bio"])
             .lean();
 
         res.status(200).json(user);
@@ -68,18 +68,18 @@ export const updateAccountDetailsAndSocials = asyncHandler(
                 throw new Error("User not found");
             }
 
-            accountDetails.username = username;
-            accountDetails.bio = bio;
+            if (username) accountDetails.username = username;
+            if (bio) accountDetails.bio = bio;
 
-            accountSocials.facebook = facebook;
-            accountSocials.instagram = instagram;
-            accountSocials.twitter = twitter;
-            accountSocials.discord = discord;
-            accountSocials.reddit = reddit;
-            accountSocials.telegram = telegram;
-            accountSocials.tiktok = tiktok;
-            accountSocials.youtube = youtube;
-            accountSocials.github = github;
+            if (facebook) accountSocials.facebook = facebook;
+            if (instagram) accountSocials.instagram = instagram;
+            if (twitter) accountSocials.twitter = twitter;
+            if (discord) accountSocials.discord = discord;
+            if (reddit) accountSocials.reddit = reddit;
+            if (telegram) accountSocials.telegram = telegram;
+            if (tiktok) accountSocials.tiktok = tiktok;
+            if (youtube) accountSocials.youtube = youtube;
+            if (github) accountSocials.github = github;
 
             // update profile pic if there is a file in the request
             if (req.file && accountDetails.profilePic?.id) {

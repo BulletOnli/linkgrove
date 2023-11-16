@@ -1,30 +1,29 @@
 "use client";
-import { usePathname } from "next/navigation";
-import { ChakraProvider } from "@chakra-ui/react";
+// Next.js / React
 import NextTopLoader from "nextjs-toploader";
-import Navbar from "../components/Navbar";
+import React, { Suspense } from "react";
+
+// Chakra UI
+import { ChakraProvider } from "@chakra-ui/react";
+import { CacheProvider } from "@chakra-ui/next-js";
+
+// Tanstack React Query
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Suspense } from "react";
+
+// Local components
 import Loading from "./loading";
-import { CacheProvider } from "@chakra-ui/next-js";
 
 const queryClient = new QueryClient();
 
-const App = ({ children }: { children: React.ReactNode }) => {
-    const pathname = usePathname();
-    const hideNav = pathname === "/login" || pathname === "/register";
-
+const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
         <QueryClientProvider client={queryClient}>
             <NextTopLoader color="#00CCCC" />
             <CacheProvider>
                 <ChakraProvider>
                     <Suspense fallback={<Loading />}>
-                        <div className="relative w-full min-h-screen text-[#F5F5F5] flex flex-col bg-[#000000] font-custom">
-                            {!hideNav && <Navbar />}
-                            {children}
-                        </div>
+                        {children}
                         <ReactQueryDevtools />
                     </Suspense>
                 </ChakraProvider>
@@ -33,4 +32,4 @@ const App = ({ children }: { children: React.ReactNode }) => {
     );
 };
 
-export default App;
+export default Providers;

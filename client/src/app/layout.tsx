@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import App from "./_app";
+import Providers from "./Providers";
+import { lazy } from "react";
+
+const Navbar = lazy(() => import("../components/Navbar"));
 
 export const metadata: Metadata = {
     title: "LinkGrove",
@@ -15,7 +18,12 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <App>{children}</App>
+                <Providers>
+                    <div className="relative w-full min-h-screen text-[#F5F5F5] flex flex-col bg-[#000000] font-custom">
+                        <Navbar />
+                        {children}
+                    </div>
+                </Providers>
             </body>
         </html>
     );

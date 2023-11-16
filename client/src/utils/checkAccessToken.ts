@@ -23,7 +23,7 @@ export const isTokenAvailable = async () => {
                 return false;
             }
         }
-
+        console.log("Token available");
         return true;
     } catch (error) {
         const newAccessToken = await refreshAccessToken();

@@ -1,4 +1,11 @@
 "use client";
+// External libraries
+import { useDisclosure } from "@chakra-ui/react";
+import { BsSearch } from "react-icons/bs";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+// Chakra UI components
 import {
     Button,
     FormControl,
@@ -7,21 +14,17 @@ import {
     InputGroup,
     InputLeftElement,
     Spacer,
-    useDisclosure,
     Image,
 } from "@chakra-ui/react";
-import { BsSearch } from "react-icons/bs";
+// Local components
 import ProfileInfo from "@/src/components/profile/ProfileInfo";
 import NewLinkModal from "@/src/components/modal/NewLinkModal";
 import ErrorPage from "@/src/components/ErrorPage";
 import LinkCard, { LinkType } from "@/src/components/LinkCard";
-import { useParams } from "next/navigation";
+// Zustand store
 import userStore from "@/src/zustandStore/userStore";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+// API and constants
 import { API_URL } from "@/src/api/userApi";
-import Loading from "../../loading";
-import LinkCard2 from "@/src/components/LinkCard2";
 
 const ProfilePage = () => {
     const params = useParams<{ username: string }>().username;
@@ -69,7 +72,6 @@ const ProfilePage = () => {
     const isOtherProfile =
         accountUser?.username !== userProfileQuery.data?.user?.username;
 
-    if (userProfileQuery.isLoading) return <Loading />;
     if (userProfileQuery.error) return <ErrorPage />;
 
     return (
@@ -116,10 +118,10 @@ const ProfilePage = () => {
                     </HStack>
 
                     <div className="w-full flex flex-wrap justify-center lg:justify-start gap-4">
-                        {userLinksQuery.isLoading ? "Loading Links..." : ""}
+                        {userLinksQuery.isLoading ? "Loading links..." : ""}
 
                         {userLinksQuery.data?.map((link: LinkType) => (
-                            <LinkCard2
+                            <LinkCard
                                 link={link}
                                 key={link._id}
                                 userProfileInfo={userProfileQuery.data?.user}
