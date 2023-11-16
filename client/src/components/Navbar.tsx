@@ -8,10 +8,9 @@ import {
     Avatar,
     Text,
     useToast,
-    HStack,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
-import { BsFillPersonFill, BsGear, BsHeart, BsHeartFill } from "react-icons/bs";
+import { BsFillPersonFill, BsGear } from "react-icons/bs";
 import { ImHome } from "react-icons/im";
 import { FiLogOut } from "react-icons/fi";
 import Link from "next/link";
@@ -37,11 +36,10 @@ const Navbar = () => {
     };
 
     useEffect(() => {
-        const checkToken = async () => await isTokenAvailable();
-
         getAccountUser();
-        checkToken();
     }, [pathname]);
+
+    if (pathname === "/login" || pathname === "/register") return;
 
     return (
         <div className="absolute z-20 w-full flex justify-between py-4 px-6">
@@ -53,7 +51,7 @@ const Navbar = () => {
             </Link>
 
             {accountUser ? (
-                <Menu>
+                <Menu isLazy>
                     <MenuButton
                         as={Button}
                         colorScheme="blackAlpha"

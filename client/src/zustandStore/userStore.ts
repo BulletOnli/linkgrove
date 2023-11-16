@@ -1,6 +1,7 @@
 import { create } from "zustand";
-import { fetchAccountUser } from "../api/userApi";
+import { API_URL, fetchAccountUser } from "../api/userApi";
 import { isTokenAvailable } from "../utils/checkAccessToken";
+import axios from "axios";
 
 export type UserType = {
     username: string;
@@ -30,9 +31,20 @@ const userStore = create<UserStoreType>((set, get) => ({
             set({ accountUser: null });
         }
     },
-    logoutUser: () => {
-        localStorage.removeItem("weblinksToken");
-        set({ accountUser: null });
+    logoutUser: async () => {
+        await axios
+            .post(`${API_URL}/auth/logout`, null, {
+                headers: {
+                    Authorization: `Bearer ${localStorage.getItem(
+                        "weblinksToken"
+                    )}`,
+                },
+                withCredentials: true,
+            })
+            .then(() => {
+                localStorage.removeItem("weblinksToken");
+                set({ accountUser: null });
+            });
     },
 }));
 

@@ -135,3 +135,20 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         throw new Error("Incorrect email or password");
     }
 });
+
+export const logoutUser = asyncHandler(async (req: Request, res: Response) => {
+    const cookie = req.cookies?.jwt;
+
+    if (!cookie) {
+        res.status(204);
+        return;
+    }
+
+    res.status(200)
+        .clearCookie("jwt", {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true,
+        })
+        .json({ message: "Logout success" });
+});
